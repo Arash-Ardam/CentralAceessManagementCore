@@ -63,7 +63,20 @@ namespace CAM.Service.Repository
             else throw new Exception();
         }
 
+        public async Task<DataCenter> TryGetDataCenterWithAccessNames(string dataCenterName,string sourceName,string destinationName)
+        {
+            DataCenter dataCenter = await GetDataCenter(dataCenterName);
+            if(dataCenter == default)
+                return DataCenter.Empty;
 
+            _dbContext.Entry(dataCenter)
+                .Collection(dc => dc.DatabaseEngines)
+                .Query()
+                .Where(dbE => dbE.Name == sourceName || dbE.Name == destinationName)
+                .ToList();
+
+            return dataCenter;
+        }
 
         public async Task<DataCenter> TryGetDataCenterWithGivenParams(string dcName, string dbEngineName, string address)
         {

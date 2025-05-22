@@ -1,4 +1,7 @@
-﻿using CAM.Api.Dtos;
+﻿using AutoMapper;
+using CAM.Api.Dtos;
+using CAM.Service.Access_Service;
+using CAM.Service.Dtos;
 using Domain.DataModels;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -7,22 +10,25 @@ namespace CAM.Api.Controllers
 {
     public class AccessController : ApiControllerBase
     {
-        public AccessController(ILogger<ApiControllerBase> logger) : base(logger)
+        private readonly IMapper _mapper;
+        private readonly IAccessService _service;
+
+        public AccessController(ILogger<ApiControllerBase> logger , IMapper mapper , IAccessService accessService) : base(logger)
         {
+            _mapper = mapper;
+            _service = accessService;
         }
 
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> AddInBound([FromBody] AddAccessDto addAccessDto)
-        //{
-        //    Access access = new Access.Create()
-        //        .AddSource(addAccessDto.FromName)
-        //        .AddDestination(addAccessDto.ToName)
-        //        .SetDirection(DatabaseDirection.InBound)
-        //        .Build();
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddInBoundByName([FromBody] AddInBoundAccessByNameDto addAccessDto)
+        {
+            var createAccessDto = _mapper.Map<AddAccessByNameDto>(addAccessDto);
 
-        //    var response = 
+            var response = await _service.CreateAccess(createAccessDto);
 
-        //}
+            return Created();
+
+        }
 
     }
 }

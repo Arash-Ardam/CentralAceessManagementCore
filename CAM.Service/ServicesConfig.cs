@@ -1,4 +1,5 @@
-﻿using CAM.Service.DataBase_Service;
+﻿using CAM.Service.Access_Service;
+using CAM.Service.DataBase_Service;
 using CAM.Service.DatabaseEngine_Service;
 using CAM.Service.DataCenter_Service;
 using CAM.Service.Repository;
@@ -16,6 +17,9 @@ namespace CAM.Service
         public static void AddCAMServices(this IServiceCollection services)
         {
             services.AddScoped<IDataCenterSqlDataRepository,DataCenterSqlDataRepository>();
+            services.AddScoped<IAccessRepository,AccessRepository>();
+
+            services.AddScoped<IAccessService,AccessService>();
             services.AddScoped<IDataCenterService, DataCenterService>();
             services.AddScoped<IDatabaseEngineService, DatabaseEngineService>();
             services.AddScoped<IDataBaseService,DataBaseService>();

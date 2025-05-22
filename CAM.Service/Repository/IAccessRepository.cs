@@ -9,11 +9,12 @@ namespace CAM.Service.Repository
 {
     public interface IAccessRepository
     {
-        Task<Access> CreateAccess(string dataCenterName,Access access);
+        Task<Access> CreateAccess(DataCenter dataCenter,Access access);
         Task<Access> RemoveAccess(string dataCenterName,Access access);
         Task<List<Access>> GetAllAccesses();
         Task<List<Access>> GetAllAccessesForDC(string dataCenterName);
-        Task<Access> GetAccess(string dataCenterNames,Access access);
+
+        bool AnyAccessExist(DataCenter dataCenter, Access access, int port);
 
     }
 }

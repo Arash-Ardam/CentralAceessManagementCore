@@ -14,31 +14,24 @@ namespace CAM.Service.Repository
         {
             _dbContext = dbContext;
         }
-        public async Task<Access> CreateAccess(string dataCenterName, Access access)
+        public async Task<Access> CreateAccess(DataCenter dataCenter, Access access)
         {
-            DataCenter dataCenter = _dbContext.DataCenters.FirstOrDefault(dc => dc.Name == dataCenterName) ?? DataCenter.Empty;
-            if (dataCenter == DataCenter.Empty)
-                throw new Exception();
 
-            var existedAccess = _dbContext
-                .Entry(dataCenter)
-                .Collection(x => x.Accesses)
-                .Query()
-                .Contains(access);
-
-            if(!existedAccess)
-            {
-                dataCenter.AddAccess(access);
-                _dbContext.Entry(dataCenter).Collection(x=> x.Accesses).IsModified = true;
-            }
+            dataCenter.AddAccess(access);
+            _dbContext.Entry(dataCenter).Collection(x=> x.Accesses).IsModified = true;
+            
 
             await _dbContext.SaveChangesAsync();
             return access;
         }
 
-        public Task<Access> GetAccess(string dataCenterNames, Access access)
+        public bool AnyAccessExist(DataCenter dataCenter, Access access, int port)
         {
-            throw new NotImplementedException();
+            return _dbContext
+                .Entry(dataCenter)
+                .Collection(dc => dc.Accesses)
+                .Query()
+                .Any(ac => ac.Source == access.Source && ac.Destination == access.Destination && ac.Port == port);
         }
 
         public Task<List<Access>> GetAllAccesses()

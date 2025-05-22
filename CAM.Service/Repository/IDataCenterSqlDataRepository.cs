@@ -11,6 +11,7 @@ namespace CAM.Service.Repository
         Task<DataCenter> GetDataCenter(string name);
         Task<DataCenter> GetDataCenterWithEngines(string name);
         Task<DataCenter> TryGetDataCenterWithGivenParams(string dcName,string dbEngineName,string address);
+        Task<DataCenter> TryGetDataCenterWithAccessNames(string dataCenterName, string sourceName, string destinationName);
         Task<List<DataCenter>> GetAllDataCenters();
         
         Task AddDataBaseEngine(string dcName, string dbEngineName, string address);

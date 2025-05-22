@@ -1,4 +1,5 @@
 using ApplicationDbContext.EntityConfigs;
+using CAM.Api.Mapper;
 using CAM.Service;
 
 namespace CAM.Api
@@ -12,6 +13,7 @@ namespace CAM.Api
             // Add services to the container.
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddCAMDbContext(builder.Configuration);

@@ -1,5 +1,6 @@
 using Domain.DataModels;
 using Domain.Enums;
+using Newtonsoft.Json;
 
 namespace DomainTest
 {
@@ -182,12 +183,14 @@ namespace DomainTest
         {
             //Arrange
             DatabaseEngine databaseEngine1 = DatabaseEngine.CreateByNameAndAddress("DCEngine1", "1.1.1.1");
+            string jsonSource = JsonConvert.SerializeObject(databaseEngine1);
             DatabaseEngine databaseEngine2 = DatabaseEngine.CreateByNameAndAddress("DCEngine2", "8.8.8.8");
+            string jsonDestination = JsonConvert.SerializeObject(databaseEngine2);
 
             //Act
             Access newAccess = new Access.Create()
-                .AddSource(databaseEngine1)
-                .AddDestination(databaseEngine2)
+                .AddSource(jsonSource)
+                .AddDestination(jsonDestination)
                 .AddPort(80)
                 .SetDirection(DatabaseDirection.InBound)
                 .Build();
@@ -201,12 +204,14 @@ namespace DomainTest
         {
             //Arrange
             DatabaseEngine databaseEngine1 = DatabaseEngine.CreateByNameAndAddress("DCEngine1", "1.1.1.1");
+            string jsonSource = JsonConvert.SerializeObject(databaseEngine1);
             DatabaseEngine databaseEngine2 = DatabaseEngine.CreateByNameAndAddress("DCEngine2", "8.8.8.8");
+            string jsonDestination = JsonConvert.SerializeObject(databaseEngine2);
 
             //Act
             Access newAccess = new Access.Create()
-                .AddSource(databaseEngine1)
-                .AddDestination(databaseEngine2)
+                .AddSource(jsonSource)
+                .AddDestination(jsonDestination)
                 .AddPort(80)
                 .SetDirection(DatabaseDirection.OutBound)
                 .Build();

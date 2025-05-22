@@ -37,10 +37,10 @@ namespace ApplicationDbContext
             modelBuilder.ApplyConfiguration(new DataCenterConfigs());
             modelBuilder.ApplyConfiguration(new DatabaseEngineConfigs());
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=localhost;Database=CentralAccessManagementCore;Integrated Security=SSPI;TrustServerCertificate=True");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("Server=localhost;Database=CentralAccessManagementCore;Integrated Security=SSPI;TrustServerCertificate=True");
+        //}
 
     }
 }
