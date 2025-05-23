@@ -1,5 +1,5 @@
 ﻿using CAM.Service.Dto;
-using CAM.Service.Repository;
+using CAM.Service.Repository.DataBaseEngineRepo;
 using Domain.DataModels;
 using System;
 using System.Collections.Generic;
@@ -12,9 +12,9 @@ namespace CAM.Service.DatabaseEngine_Service
 {
     internal class DatabaseEngineService : IDatabaseEngineService
     {
-        private readonly IDataCenterSqlDataRepository _sqlRepo;
+        private readonly IDataBaseEngineRepo _sqlRepo;
 
-        public DatabaseEngineService(IDataCenterSqlDataRepository sqlDataRepository)
+        public DatabaseEngineService(IDataBaseEngineRepo sqlDataRepository)
         {
             _sqlRepo = sqlDataRepository;
         }

@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CAM.Service.Repository
+namespace CAM.Service.Repository.AccessRepo
 {
     public interface IAccessRepository
     {
-        Task<Access> CreateAccess(DataCenter dataCenter,Access access);
-        Task<Access> RemoveAccess(string dataCenterName,Access access);
+        Task<Access> CreateAccess(DataCenter dataCenter, Access access);
+        Task<Access> RemoveAccess(string dataCenterName, Access access);
         Task<List<Access>> GetAllAccesses();
         Task<List<Access>> GetAllAccessesForDC(string dataCenterName);
 

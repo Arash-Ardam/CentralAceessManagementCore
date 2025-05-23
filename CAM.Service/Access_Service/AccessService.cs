@@ -1,5 +1,7 @@
-﻿using CAM.Service.Dtos;
-using CAM.Service.Repository;
+﻿using CAM.Service.Dto;
+using CAM.Service.Dtos;
+using CAM.Service.Repository.AccessRepo;
+using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using Newtonsoft.Json;
 using System;
@@ -36,7 +38,13 @@ namespace CAM.Service.Access_Service
 
         private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AddAccessByNameDto dto) 
         {
-            var existedDataCenter = await _dataCenterSqlRepo.TryGetDataCenterWithAccessNames(dto.DCName, dto.FromName, dto.ToName);
+            SearchDCDto searchDCDto = new SearchDCDto.Create()
+                .AddDcName(dto.DCName)
+                .AddAccessSourceName(dto.FromName)
+                .AddAccessDestinationName(dto.ToName)
+                .Build();
+
+            var existedDataCenter = await _dataCenterSqlRepo.GetDataCenterWithParams(searchDCDto);
 
             if (existedDataCenter == DataCenter.Empty)
                 throw new Exception($"No DataCenter with name: {dto.DCName} found");

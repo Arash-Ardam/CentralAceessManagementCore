@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CAM.Service.Repository
+namespace CAM.Service.Repository.AccessRepo
 {
     internal class AccessRepository : IAccessRepository
     {
@@ -18,8 +18,8 @@ namespace CAM.Service.Repository
         {
 
             dataCenter.AddAccess(access);
-            _dbContext.Entry(dataCenter).Collection(x=> x.Accesses).IsModified = true;
-            
+            _dbContext.Entry(dataCenter).Collection(x => x.Accesses).IsModified = true;
+
 
             await _dbContext.SaveChangesAsync();
             return access;

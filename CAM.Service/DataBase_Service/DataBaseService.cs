@@ -1,5 +1,6 @@
 ﻿using CAM.Service.Dto;
-using CAM.Service.Repository;
+using CAM.Service.Repository.DataBaseRepo;
+using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ namespace CAM.Service.DataBase_Service
 {
     internal class DataBaseService : IDataBaseService
     {
-        private readonly IDataCenterSqlDataRepository _sqlRepo;
+        private readonly IDataBaseRepo _sqlRepo;
 
-        public DataBaseService(IDataCenterSqlDataRepository repository)
+        public DataBaseService(IDataBaseRepo repository)
         {
             _sqlRepo = repository;
         }

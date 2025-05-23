@@ -1,4 +1,5 @@
-﻿using CAM.Service.Repository;
+﻿using CAM.Service.Dto;
+using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,11 @@ namespace CAM.Service.DataCenter_Service
         }
         public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
         {
-            return await _sqlRepo.GetDataCenterWithEngines(name);
+            SearchDCDto searchDCDto = new SearchDCDto.Create()
+                .AddDcName(name)
+                .Build();
+
+            return await _sqlRepo.GetDataCenterWithParams(searchDCDto);
         }
     }
 }

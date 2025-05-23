@@ -2,7 +2,10 @@
 using CAM.Service.DataBase_Service;
 using CAM.Service.DatabaseEngine_Service;
 using CAM.Service.DataCenter_Service;
-using CAM.Service.Repository;
+using CAM.Service.Repository.AccessRepo;
+using CAM.Service.Repository.DataBaseEngineRepo;
+using CAM.Service.Repository.DataBaseRepo;
+using CAM.Service.Repository.DataCenterRepo;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -17,12 +20,14 @@ namespace CAM.Service
         public static void AddCAMServices(this IServiceCollection services)
         {
             services.AddScoped<IDataCenterSqlDataRepository,DataCenterSqlDataRepository>();
-            services.AddScoped<IAccessRepository,AccessRepository>();
+            services.AddScoped<IDataBaseEngineRepo, DataBaseEngineRepo>();
+            services.AddScoped<IDataBaseRepo, DataBaseRepo>();
+            services.AddScoped<IAccessRepository, AccessRepository>();
 
-            services.AddScoped<IAccessService,AccessService>();
             services.AddScoped<IDataCenterService, DataCenterService>();
             services.AddScoped<IDatabaseEngineService, DatabaseEngineService>();
             services.AddScoped<IDataBaseService,DataBaseService>();
+            services.AddScoped<IAccessService, AccessService>();
         }
     }
 }
