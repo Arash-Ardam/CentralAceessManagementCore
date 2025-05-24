@@ -1,4 +1,4 @@
-﻿using CAM.Service.Dtos;
+﻿using CAM.Service.Dto;
 using Domain.DataModels;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,6 @@ namespace CAM.Service.Access_Service
 {
     public interface IAccessService
     {
-        Task<Access> CreateAcceess(AddAccessByNameDto dto);
+        Task<Access> CreateAcceess(AddAccessBaseDto dto);
     }
 }

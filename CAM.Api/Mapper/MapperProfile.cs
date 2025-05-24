@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CAM.Api.Dtos;
-using CAM.Service.Dtos;
+using CAM.Service.Dto;
 
 namespace CAM.Api.Mapper
 {
@@ -9,10 +9,13 @@ namespace CAM.Api.Mapper
 
         public MapperProfile()
         {
-            CreateMap<AddInBoundAccessByNameDto, AddAccessByNameDto>()
+            CreateMap<AddInBoundAccessByNameDto, AddAccessBaseDto>()
                 .ForMember(x => x.FromDCName, t => t.MapFrom(x => x.DCName));
 
-            CreateMap<AddOutBoundAccessByNameDto, AddAccessByNameDto>();
+            CreateMap<AddOutBoundAccessByNameDto, AddAccessBaseDto>();
+
+            CreateMap<AddInBoundAccessByAddressDto, AddAccessBaseDto>()
+                .ForMember(x => x.FromDCName, t => t.MapFrom(x => x.DCName));
 
         }
     }

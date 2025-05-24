@@ -1,5 +1,4 @@
 ﻿using CAM.Service.Dto;
-using CAM.Service.Dtos;
 using CAM.Service.Repository.AccessRepo;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
@@ -24,7 +23,7 @@ namespace CAM.Service.Access_Service
             _dataCenterSqlRepo = dataCenterSqlRepo;
             _accessRepo = accessRepo;
         }
-        public async Task<Access> CreateAcceess(AddAccessByNameDto dto)
+        public async Task<Access> CreateAcceess(AddAccessBaseDto dto)
         {
             var validatedEntries = await GetValidatedEntries(dto);
             bool isAccessExist = _accessRepo.AnyAccessExist(validatedEntries.dataCenter, validatedEntries.access, dto.Port);
@@ -35,30 +34,27 @@ namespace CAM.Service.Access_Service
            return  await _accessRepo.CreateAccess(validatedEntries.dataCenter, validatedEntries.access);
         }
 
-       
 
-        private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AddAccessByNameDto dto) 
+        private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AddAccessBaseDto dto) 
         {
-            var validatedDCs = await GetValidatedDataCenters(dto);
+            var searchedDCs = await GetValidatedDataCenters(dto);
 
-            var TargetDbEngines = HasValidatedDbEngines(validatedDCs, dto);
-            if (!TargetDbEngines.hasSource)
-                throw new Exception($"No source DbEngine with name: {dto.FromName} found");
-            if (!TargetDbEngines.hasDestination)
-                throw new Exception($"No destination DbEngine with name: {dto.ToName} found");
+            var TargetDbEngines = GetValidatedDbEngines(searchedDCs.sourceDC,searchedDCs.destinationDC, dto);
+            
+            var validatedAccess = GetValidatedAccess(TargetDbEngines.source,TargetDbEngines.destination,dto);
 
-            var validatedAccess = GetValidatedAccess(validatedDCs,dto);
-
-            return(validatedDCs.sourceDC, validatedAccess);
+            return(searchedDCs.sourceDC, validatedAccess);
         }
 
-        private async Task<(DataCenter sourceDC, DataCenter destinationDC)> GetValidatedDataCenters(AddAccessByNameDto dto)
+        private async Task<(DataCenter sourceDC, DataCenter destinationDC)> GetValidatedDataCenters(AddAccessBaseDto dto)
         {
             var searchDto = new SearchDCDto.Create()
                     .AddSourceDcName(dto.FromDCName)
                     .AddDestinationDcName(dto.ToDCName)
                     .AddAccessSourceName(dto.FromName)
                     .AddAccessDestinationName(dto.ToName)
+                    .AddAccessSourceAddress(dto.FromAddress)
+                    .AddAccessDestinationAddress(dto.ToAddress)
                     .Build();
 
             var searchedDcs = await _dataCenterSqlRepo.SearchSourceAndDestinationDataCenters(searchDto);
@@ -72,36 +68,29 @@ namespace CAM.Service.Access_Service
             return searchedDcs;
         }
 
-        private (bool hasSource,bool hasDestination)
-            HasValidatedDbEngines((DataCenter sourceDC, DataCenter destinationDC) validatedDCs,AddAccessByNameDto dto)
+        private (DatabaseEngine source, DatabaseEngine destination)
+            GetValidatedDbEngines(DataCenter sourceDC, DataCenter destinationDC ,AddAccessBaseDto dto)
         {
-            bool hasSource = false;
-            bool hasDestination = false;
+            DatabaseEngine source = sourceDC
+                .DatabaseEngines
+                .FirstOrDefault(x => x.Name == dto.FromName || x.Address == dto.FromAddress) ?? DatabaseEngine.Empty;
 
-            if (validatedDCs.sourceDC.DatabaseEngines.Any(x => x.Name == dto.FromName))
-                hasSource = true;
+            DatabaseEngine destination = destinationDC
+                .DatabaseEngines
+                .FirstOrDefault(x => x.Name == dto.ToName || x.Address == dto.ToAddress) ?? DatabaseEngine.Empty;
 
-            if (validatedDCs.destinationDC.DatabaseEngines.Any(x => x.Name == dto.ToName))
-                hasDestination = true;
+            if (source == DatabaseEngine.Empty)
+                throw new Exception($"No source DbEngine with name: {dto.FromName} Or address : {dto.FromAddress} found");
+            if (destination == DatabaseEngine.Empty)
+                throw new Exception($"No destination DbEngine with name: {dto.ToName} Or address : {dto.ToAddress} found");
 
-            return (hasSource,hasDestination);
+            return (source, destination);
         }
 
-        private Access GetValidatedAccess((DataCenter sourceDC, DataCenter destinationDC) targetDCs, AddAccessByNameDto dto)
+        private Access GetValidatedAccess(DatabaseEngine source, DatabaseEngine destination, AddAccessBaseDto dto)
         {
-            string serializedSource = string.Empty;
-            string serializedDestination = string.Empty;
-
-            if (dto.Direction == DatabaseDirection.InBound)
-            {
-                serializedSource = JsonConvert.SerializeObject(targetDCs.sourceDC.DatabaseEngines[0]);
-                serializedDestination = JsonConvert.SerializeObject(targetDCs.sourceDC.DatabaseEngines[1]);
-            }
-            else
-            {
-                serializedSource = JsonConvert.SerializeObject(targetDCs.sourceDC.DatabaseEngines[0]);
-                serializedDestination = JsonConvert.SerializeObject(targetDCs.destinationDC.DatabaseEngines[0]);
-            }
+            string serializedSource = JsonConvert.SerializeObject(source);
+            string serializedDestination = JsonConvert.SerializeObject(destination);
 
             Access validatedAccess = new Access.Create()
                 .AddSource(serializedSource)
@@ -112,6 +101,7 @@ namespace CAM.Service.Access_Service
 
             return validatedAccess;
         }
+
 
     }
 }
