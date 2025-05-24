@@ -10,6 +10,6 @@ namespace CAM.Service.Access_Service
 {
     public interface IAccessService
     {
-        Task<Access> CreateAccess(AddAccessByNameDto dto);
+        Task<Access> CreateAcceess(AddAccessByNameDto dto);
     }
 }

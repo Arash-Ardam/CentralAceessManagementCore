@@ -25,7 +25,7 @@ namespace CAM.Service.Repository.DataBaseRepo
         public async Task AddDataBaseToDataBaseEngine(string dcName, string dbEngineName, string dbName)
         {
             SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddDcName(dcName)
+                .AddSourceDcName(dcName)
                 .AddDbEngineName(dbEngineName)
                 .Build();
 
@@ -55,7 +55,7 @@ namespace CAM.Service.Repository.DataBaseRepo
         public async Task<List<Database>> SearchDataBase(string dcName, string dbEngineName, string dbName)
         {
             SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddDcName(dcName)
+                .AddSourceDcName(dcName)
                 .AddDbEngineName(dbEngineName)
                 .Build();
 

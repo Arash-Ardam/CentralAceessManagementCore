@@ -60,7 +60,7 @@ namespace Domain.DataModels
 
             public Create SetDirection(DatabaseDirection direction)
             {
-                baseAccess.Direction = direction;
+                Direction = direction;
                 return this;
             }
 

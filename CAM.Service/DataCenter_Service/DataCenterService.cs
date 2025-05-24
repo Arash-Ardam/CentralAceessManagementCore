@@ -44,7 +44,7 @@ namespace CAM.Service.DataCenter_Service
         public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
         {
             SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddDcName(name)
+                .AddSourceDcName(name)
                 .Build();
 
             return await _sqlRepo.GetDataCenterWithParams(searchDCDto);

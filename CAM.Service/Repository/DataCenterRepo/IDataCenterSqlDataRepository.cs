@@ -10,6 +10,7 @@ namespace CAM.Service.Repository.DataCenterRepo
         Task UpdateDataCenter(string oldName, string newName);
         Task<DataCenter> GetDataCenter(string name);
         Task<DataCenter> GetDataCenterWithParams(SearchDCDto dto);
+        Task<(DataCenter source, DataCenter destination)> SearchSourceAndDestinationDataCenters(SearchDCDto dto);
         Task<List<DataCenter>> GetAllDataCenters();
 
     }

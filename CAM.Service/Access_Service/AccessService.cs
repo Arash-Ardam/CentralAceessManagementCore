@@ -3,6 +3,7 @@ using CAM.Service.Dtos;
 using CAM.Service.Repository.AccessRepo;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
+using Domain.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace CAM.Service.Access_Service
             _dataCenterSqlRepo = dataCenterSqlRepo;
             _accessRepo = accessRepo;
         }
-        public async Task<Access> CreateAccess(AddAccessByNameDto dto)
+        public async Task<Access> CreateAcceess(AddAccessByNameDto dto)
         {
             var validatedEntries = await GetValidatedEntries(dto);
             bool isAccessExist = _accessRepo.AnyAccessExist(validatedEntries.dataCenter, validatedEntries.access, dto.Port);
@@ -34,48 +35,82 @@ namespace CAM.Service.Access_Service
            return  await _accessRepo.CreateAccess(validatedEntries.dataCenter, validatedEntries.access);
         }
 
-
+       
 
         private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AddAccessByNameDto dto) 
         {
-            SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddDcName(dto.DCName)
-                .AddAccessSourceName(dto.FromName)
-                .AddAccessDestinationName(dto.ToName)
-                .Build();
+            var validatedDCs = await GetValidatedDataCenters(dto);
 
-            var existedDataCenter = await _dataCenterSqlRepo.GetDataCenterWithParams(searchDCDto);
+            var TargetDbEngines = HasValidatedDbEngines(validatedDCs, dto);
+            if (!TargetDbEngines.hasSource)
+                throw new Exception($"No source DbEngine with name: {dto.FromName} found");
+            if (!TargetDbEngines.hasDestination)
+                throw new Exception($"No destination DbEngine with name: {dto.ToName} found");
 
-            if (existedDataCenter == DataCenter.Empty)
-                throw new Exception($"No DataCenter with name: {dto.DCName} found");
+            var validatedAccess = GetValidatedAccess(validatedDCs,dto);
 
-            if (!existedDataCenter.DatabaseEngines.Any(x => x.Name == dto.FromName))
-                throw new Exception($"No Source DbEngine with name: {dto.FromName} found");
+            return(validatedDCs.sourceDC, validatedAccess);
+        }
 
-            if (!existedDataCenter.DatabaseEngines.Any(x => x.Name == dto.ToName))
-                throw new Exception($"No Destination DbEngine with name: {dto.ToName} found");
+        private async Task<(DataCenter sourceDC, DataCenter destinationDC)> GetValidatedDataCenters(AddAccessByNameDto dto)
+        {
+            var searchDto = new SearchDCDto.Create()
+                    .AddSourceDcName(dto.FromDCName)
+                    .AddDestinationDcName(dto.ToDCName)
+                    .AddAccessSourceName(dto.FromName)
+                    .AddAccessDestinationName(dto.ToName)
+                    .Build();
 
-            DatabaseEngine source = existedDataCenter.DatabaseEngines[0];
-            DatabaseEngine destination = existedDataCenter.DatabaseEngines[1];
+            var searchedDcs = await _dataCenterSqlRepo.SearchSourceAndDestinationDataCenters(searchDto);
 
-            var serializedDbEngines = ConvertSourceAndDestination(source, destination);
+            if (searchedDcs.source == DataCenter.Empty)
+                throw new Exception($"No DataCenter with name: {dto.FromDCName} found");
+
+            if (searchedDcs.destination == DataCenter.Empty)
+                throw new Exception($"No DataCenter with name: {dto.ToDCName} found");
+
+            return searchedDcs;
+        }
+
+        private (bool hasSource,bool hasDestination)
+            HasValidatedDbEngines((DataCenter sourceDC, DataCenter destinationDC) validatedDCs,AddAccessByNameDto dto)
+        {
+            bool hasSource = false;
+            bool hasDestination = false;
+
+            if (validatedDCs.sourceDC.DatabaseEngines.Any(x => x.Name == dto.FromName))
+                hasSource = true;
+
+            if (validatedDCs.destinationDC.DatabaseEngines.Any(x => x.Name == dto.ToName))
+                hasDestination = true;
+
+            return (hasSource,hasDestination);
+        }
+
+        private Access GetValidatedAccess((DataCenter sourceDC, DataCenter destinationDC) targetDCs, AddAccessByNameDto dto)
+        {
+            string serializedSource = string.Empty;
+            string serializedDestination = string.Empty;
+
+            if (dto.Direction == DatabaseDirection.InBound)
+            {
+                serializedSource = JsonConvert.SerializeObject(targetDCs.sourceDC.DatabaseEngines[0]);
+                serializedDestination = JsonConvert.SerializeObject(targetDCs.sourceDC.DatabaseEngines[1]);
+            }
+            else
+            {
+                serializedSource = JsonConvert.SerializeObject(targetDCs.sourceDC.DatabaseEngines[0]);
+                serializedDestination = JsonConvert.SerializeObject(targetDCs.destinationDC.DatabaseEngines[0]);
+            }
 
             Access validatedAccess = new Access.Create()
-                .AddSource(serializedDbEngines.jsonSource)
+                .AddSource(serializedSource)
                 .AddPort(dto.Port)
-                .AddDestination(serializedDbEngines.jsonDestination)
+                .AddDestination(serializedDestination)
                 .SetDirection(dto.Direction)
                 .Build();
 
-            return(existedDataCenter, validatedAccess);
-        }
-
-        private (string jsonSource,string jsonDestination) ConvertSourceAndDestination(DatabaseEngine source, DatabaseEngine destination)
-        {
-            string serializedSource = JsonConvert.SerializeObject(source);
-            string serializedDestination = JsonConvert.SerializeObject(destination);
-
-            return(serializedSource,serializedDestination);
+            return validatedAccess;
         }
 
     }

@@ -41,7 +41,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
         public async Task<List<DatabaseEngine>> SearchDataBaseEngine(SearchDbEngineDto searchDto)
         {
             SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddDcName(searchDto.dcName)
+                .AddSourceDcName(searchDto.dcName)
                 .AddDbEngineName(searchDto.dbEngineName)
                 .AddDbEngineAddress(searchDto.Address)
                 .Build();
@@ -68,7 +68,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
         public async Task RemoveDataBaseEngine(string dcName, string dbEngineName)
         {
             SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddDcName(dcName)
+                .AddSourceDcName(dcName)
                 .AddDbEngineName(dbEngineName)
                 .Build();
 
@@ -94,7 +94,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
         private async Task<DataCenter> CheckDuplicatedDbEngines(string dcName, string dbEngineName, string address)
         {
             SearchDCDto dCDto = new SearchDCDto.Create()
-                .AddDcName(dcName)
+                .AddSourceDcName(dcName)
                 .AddDbEngineName(dbEngineName)
                 .AddDbEngineAddress(address)
                 .Build();

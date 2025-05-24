@@ -23,11 +23,21 @@ namespace CAM.Api.Controllers
         public async Task<IActionResult> AddInBoundByName([FromBody] AddInBoundAccessByNameDto addAccessDto)
         {
             var createAccessDto = _mapper.Map<AddAccessByNameDto>(addAccessDto);
+            createAccessDto.ToDCName = createAccessDto.FromDCName;
 
-            var response = await _service.CreateAccess(createAccessDto);
+            var response = await _service.CreateAcceess(createAccessDto);
 
             return Created();
 
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddOutBoundAccessByName([FromBody] AddOutBoundAccessByNameDto addAccessDto)
+        {
+            var createAccessDto = _mapper.Map<AddAccessByNameDto>(addAccessDto);
+            var response = await _service.CreateAcceess(createAccessDto);
+
+            return Created();
         }
 
     }

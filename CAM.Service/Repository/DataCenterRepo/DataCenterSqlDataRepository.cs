@@ -54,8 +54,8 @@ namespace CAM.Service.Repository.DataCenterRepo
             DataCenter dataCenter = DataCenter.Empty;
             var predicate = GetDbEnginePredicate(dto);
 
-            if (dto.HasDCName())
-                dataCenter = await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == dto.DCName) ?? dataCenter;
+            if (dto.HasSourceDCName())
+                dataCenter = await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == dto.DCSourceName) ?? dataCenter;
 
             if (dataCenter != DataCenter.Empty)
             {
@@ -68,6 +68,41 @@ namespace CAM.Service.Repository.DataCenterRepo
 
             return dataCenter;
 
+        }
+
+        public async Task<(DataCenter source,DataCenter destination)> SearchSourceAndDestinationDataCenters(SearchDCDto dto)
+        {
+            DataCenter source = DataCenter.Empty;
+            DataCenter destination = DataCenter.Empty;
+            var predicate = GetDbEnginePredicate(dto);
+
+            source = await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == dto.DCSourceName) ?? source;
+
+            if (dto.DCSourceName != dto.DCDestinationName)
+                destination = await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == dto.DCDestinationName) ?? destination;
+
+            if (source != DataCenter.Empty)
+            {
+                _dbContext.Entry(source)
+                    .Collection(dc => dc.DatabaseEngines)
+                    .Query()
+                    .Where(predicate)
+                    .ToList();
+            }
+
+            if (destination != DataCenter.Empty)
+            {
+                _dbContext.Entry(destination)
+                    .Collection(dc => dc.DatabaseEngines)
+                    .Query()
+                    .Where(predicate)
+                    .ToList();
+            }
+
+            if (dto.DCSourceName == dto.DCDestinationName)
+                return (source, source);
+
+            return (source,destination);
         }
 
         public async Task UpdateDataCenter(string oldName, string newName)

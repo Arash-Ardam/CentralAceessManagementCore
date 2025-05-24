@@ -9,7 +9,9 @@ namespace CAM.Service.Dto
 {
     public class SearchDCDto
     {
-        public string DCName { get; set; } = string.Empty;
+        public string DCSourceName { get; set; } = string.Empty;
+        public string DCDestinationName { get; set; } = string.Empty;
+
         public string DCAccessSourceName { get; set; } = string.Empty ; 
         public string DCAccessSourceAddress { get; set; } = string.Empty;
         public string DCAccessDestinationName { get; set; } = string.Empty;
@@ -20,7 +22,8 @@ namespace CAM.Service.Dto
 
         private SearchDCDto(Create create)
         {
-            DCName = create.DCName;
+            DCSourceName = create.DCSourceName;
+            DCDestinationName = create.DCDestinationName;
             DCAccessSourceName = create.DCAccessSourceName;
             DCAccessSourceAddress = create.DCAccessSourceAddress;
             DCAccessDestinationName = create.DCAccessDestinationName;
@@ -29,7 +32,8 @@ namespace CAM.Service.Dto
             DBEngineAddress = create.DBEngineAddress;
         }
 
-        public bool HasDCName() => DCName != string.Empty;
+        public bool HasSourceDCName() => DCSourceName != string.Empty;
+        public bool HasDestinationDCName() => DCDestinationName != string.Empty;
         public bool HasAccessSourceName() => DCAccessSourceName != string.Empty;
         public bool HasAccessSourceAddress() => DCAccessSourceAddress != string.Empty;
         public bool HasAccessDestinationName() => DCAccessDestinationName != string.Empty;
@@ -40,7 +44,9 @@ namespace CAM.Service.Dto
 
         public class Create()
         {
-            public string DCName { get; set; } = string.Empty;
+            public string DCSourceName { get; set; } = string.Empty;
+            public string DCDestinationName { get; set; } = string.Empty;
+
             public string DCAccessSourceName { get; set; } = string.Empty;
             public string DCAccessSourceAddress { get; set; } = string.Empty;
             public string DCAccessDestinationName { get; set; } = string.Empty;
@@ -49,9 +55,15 @@ namespace CAM.Service.Dto
             public string DBEngineAddress { get; set; } = string.Empty;
 
 
-            public Create AddDcName(string dcName)
+            public Create AddSourceDcName(string dcName)
             {
-                DCName = dcName;
+                DCSourceName = dcName;
+                return this;
+            }
+
+            public Create AddDestinationDcName(string dcName)
+            {
+                DCDestinationName = dcName;
                 return this;
             }
 

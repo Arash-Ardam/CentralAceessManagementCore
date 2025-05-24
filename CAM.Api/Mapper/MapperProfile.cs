@@ -9,7 +9,11 @@ namespace CAM.Api.Mapper
 
         public MapperProfile()
         {
-            CreateMap<AddInBoundAccessByNameDto, AddAccessByNameDto>();
+            CreateMap<AddInBoundAccessByNameDto, AddAccessByNameDto>()
+                .ForMember(x => x.FromDCName, t => t.MapFrom(x => x.DCName));
+
+            CreateMap<AddOutBoundAccessByNameDto, AddAccessByNameDto>();
+
         }
     }
 }
