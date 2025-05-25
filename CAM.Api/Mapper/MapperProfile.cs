@@ -17,6 +17,8 @@ namespace CAM.Api.Mapper
             CreateMap<AddInBoundAccessByAddressDto, AddAccessBaseDto>()
                 .ForMember(x => x.FromDCName, t => t.MapFrom(x => x.DCName));
 
+            CreateMap<AddOutBoundAccessByAddressDto, AddAccessBaseDto>();  
+
         }
     }
 }

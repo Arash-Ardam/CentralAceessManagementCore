@@ -50,5 +50,14 @@ namespace CAM.Api.Controllers
             return Created();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddOutBoundByAddress([FromBody] AddOutBoundAccessByAddressDto addAccessDto)
+        {
+            var createAccessDto = _mapper.Map<AddAccessBaseDto>(addAccessDto);
+            var response = await _service.CreateAcceess(createAccessDto);
+
+            return Created();
+        }
+
     }
 }

@@ -35,6 +35,7 @@ namespace CAM.Service.Access_Service
         }
 
 
+        #region Private validation methods
         private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AddAccessBaseDto dto) 
         {
             var searchedDCs = await GetValidatedDataCenters(dto);
@@ -102,6 +103,7 @@ namespace CAM.Service.Access_Service
             return validatedAccess;
         }
 
+        #endregion
 
     }
 }
