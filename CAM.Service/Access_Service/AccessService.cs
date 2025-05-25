@@ -23,7 +23,7 @@ namespace CAM.Service.Access_Service
             _dataCenterSqlRepo = dataCenterSqlRepo;
             _accessRepo = accessRepo;
         }
-        public async Task<Access> CreateAcceess(AddAccessBaseDto dto)
+        public async Task<Access> CreateAcceess(AccessBaseDto dto)
         {
             var validatedEntries = await GetValidatedEntries(dto);
             bool isAccessExist = _accessRepo.AnyAccessExist(validatedEntries.dataCenter, validatedEntries.access, dto.Port);
@@ -34,9 +34,24 @@ namespace CAM.Service.Access_Service
            return  await _accessRepo.CreateAccess(validatedEntries.dataCenter, validatedEntries.access);
         }
 
+        public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
+        {
+            var validatedEntries = await GetValidatedEntries(dto);
+            var searchAccessDto = new SearchAccessBaseDto()
+            {
+                DCName = validatedEntries.dataCenter.Name,
+                Source = validatedEntries.access.Source,
+                Port = validatedEntries.access.Port,
+                Destination = validatedEntries.access.Destination,
+                Direction = validatedEntries.access.Direction
+            };
+
+            return _accessRepo.SearchAccess(searchAccessDto);
+        }
+
 
         #region Private validation methods
-        private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AddAccessBaseDto dto) 
+        private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AccessBaseDto dto) 
         {
             var searchedDCs = await GetValidatedDataCenters(dto);
 
@@ -47,7 +62,7 @@ namespace CAM.Service.Access_Service
             return(searchedDCs.sourceDC, validatedAccess);
         }
 
-        private async Task<(DataCenter sourceDC, DataCenter destinationDC)> GetValidatedDataCenters(AddAccessBaseDto dto)
+        private async Task<(DataCenter sourceDC, DataCenter destinationDC)> GetValidatedDataCenters(AccessBaseDto dto)
         {
             var searchDto = new SearchDCDto.Create()
                     .AddSourceDcName(dto.FromDCName)
@@ -70,7 +85,7 @@ namespace CAM.Service.Access_Service
         }
 
         private (DatabaseEngine source, DatabaseEngine destination)
-            GetValidatedDbEngines(DataCenter sourceDC, DataCenter destinationDC ,AddAccessBaseDto dto)
+            GetValidatedDbEngines(DataCenter sourceDC, DataCenter destinationDC ,AccessBaseDto dto)
         {
             DatabaseEngine source = sourceDC
                 .DatabaseEngines
@@ -88,7 +103,7 @@ namespace CAM.Service.Access_Service
             return (source, destination);
         }
 
-        private Access GetValidatedAccess(DatabaseEngine source, DatabaseEngine destination, AddAccessBaseDto dto)
+        private Access GetValidatedAccess(DatabaseEngine source, DatabaseEngine destination, AccessBaseDto dto)
         {
             string serializedSource = JsonConvert.SerializeObject(source);
             string serializedDestination = JsonConvert.SerializeObject(destination);
@@ -102,6 +117,8 @@ namespace CAM.Service.Access_Service
 
             return validatedAccess;
         }
+
+
 
         #endregion
 

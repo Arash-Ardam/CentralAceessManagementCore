@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CAM.Service.Dto
 {
-    public record AddAccessBaseDto
+    public record AccessBaseDto
     {
         public string FromDCName { get; set; } = string.Empty;
         public string ToDCName { get; set; } = string.Empty;

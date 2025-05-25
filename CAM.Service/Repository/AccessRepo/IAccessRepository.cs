@@ -1,4 +1,5 @@
-﻿using Domain.DataModels;
+﻿using CAM.Service.Dto;
+using Domain.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace CAM.Service.Repository.AccessRepo
     {
         Task<Access> CreateAccess(DataCenter dataCenter, Access access);
         Task<Access> RemoveAccess(string dataCenterName, Access access);
+        List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto);
         Task<List<Access>> GetAllAccesses();
         Task<List<Access>> GetAllAccessesForDC(string dataCenterName);
 

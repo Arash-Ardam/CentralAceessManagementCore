@@ -22,7 +22,7 @@ namespace CAM.Api.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> AddInBoundByName([FromBody] AddInBoundAccessByNameDto addAccessDto)
         {
-            var createAccessDto = _mapper.Map<AddAccessBaseDto>(addAccessDto);
+            var createAccessDto = _mapper.Map<AccessBaseDto>(addAccessDto);
             createAccessDto.ToDCName = createAccessDto.FromDCName;
 
             var response = await _service.CreateAcceess(createAccessDto);
@@ -33,7 +33,7 @@ namespace CAM.Api.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> AddOutBoundAccessByName([FromBody] AddOutBoundAccessByNameDto addAccessDto)
         {
-            var createAccessDto = _mapper.Map<AddAccessBaseDto>(addAccessDto);
+            var createAccessDto = _mapper.Map<AccessBaseDto>(addAccessDto);
             var response = await _service.CreateAcceess(createAccessDto);
 
             return Created();
@@ -42,7 +42,7 @@ namespace CAM.Api.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> AddInBoundByAddress([FromBody] AddInBoundAccessByAddressDto addAcceessDto)
         {
-            var createAccessDto = _mapper.Map<AddAccessBaseDto>(addAcceessDto);
+            var createAccessDto = _mapper.Map<AccessBaseDto>(addAcceessDto);
             createAccessDto.ToDCName = createAccessDto.FromDCName;
 
             var response = await _service.CreateAcceess(createAccessDto);
@@ -53,10 +53,21 @@ namespace CAM.Api.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> AddOutBoundByAddress([FromBody] AddOutBoundAccessByAddressDto addAccessDto)
         {
-            var createAccessDto = _mapper.Map<AddAccessBaseDto>(addAccessDto);
+            var createAccessDto = _mapper.Map<AccessBaseDto>(addAccessDto);
             var response = await _service.CreateAcceess(createAccessDto);
 
             return Created();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Search([FromBody] SearchAccessDto searchDto)
+        {
+            AccessBaseDto mappedDto = _mapper.Map<AccessBaseDto>(searchDto);
+            List<Access> searchedAccesses = await _service.SearchAccess(mappedDto);
+
+            var result = searchedAccesses.Select(x => _mapper.Map<SearchAccessResultDto>(x)).ToList();
+
+            return Ok(result);
         }
 
     }

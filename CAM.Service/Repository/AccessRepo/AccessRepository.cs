@@ -1,6 +1,9 @@
-﻿using Domain.DataModels;
+﻿using CAM.Service.Dto;
+using Domain.DataModels;
+using LinqKit;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,5 +51,34 @@ namespace CAM.Service.Repository.AccessRepo
         {
             throw new NotImplementedException();
         }
+
+        public List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto)
+        {
+            DataCenter dataCenter = _dbContext.DataCenters.FirstOrDefault(dc => dc.Name == searchAccessDto.DCName) ?? DataCenter.Empty;
+
+            if (dataCenter == DataCenter.Empty)
+                return new List<Access>();
+            
+            return  _dbContext.Entry(dataCenter)
+                              .Collection(dc => dc.Accesses)
+                              .Query()
+                              .Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();
+        }
+
+        private ExpressionStarter<Access> GetSearchPredicate(SearchAccessBaseDto searchAccessDto)
+        {
+            var predicate = PredicateBuilder.New<Access>(true);
+            if (searchAccessDto.HasSource())
+                predicate.And(ac => ac.Source == searchAccessDto.Source);
+            if (searchAccessDto.HasDestination())
+                predicate.And(ac => ac.Destination == searchAccessDto.Destination);
+            if(searchAccessDto.HasPort())
+                predicate.And(ac => ac.Port == searchAccessDto.Port);
+            if (searchAccessDto.HasDirection())
+                predicate.And(ac => ac.Direction == searchAccessDto.Direction);
+
+            return predicate;
+        }
+
     }
 }

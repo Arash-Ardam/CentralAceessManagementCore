@@ -8,7 +8,8 @@ namespace Domain.Enums
 {
     public enum DatabaseDirection
     {
-        InBound = 0,
-        OutBound = 1
+        none = 0,
+        InBound = 1,
+        OutBound = 2
     }
 }
