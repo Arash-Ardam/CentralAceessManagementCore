@@ -4,7 +4,8 @@ namespace CAM.Api.Dtos
 {
     public record SearchAccessDto
     {
-        public string DCName { get; set; } = string.Empty;
+        public string SourceDCName { get; set; } = string.Empty;
+        public string DestinationDCName { get; set; } = string.Empty;
         public string FromName { get; set; } = string.Empty;
         public string ToName { get; set; } = string.Empty;
         public string FromAddress { get; set; } = string.Empty;

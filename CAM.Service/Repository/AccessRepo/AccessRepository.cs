@@ -19,6 +19,8 @@ namespace CAM.Service.Repository.AccessRepo
         }
         public async Task<Access> CreateAccess(DataCenter dataCenter, Access access)
         {
+            if (access.Source == string.Empty || access.Destination == string.Empty)
+                throw new Exception("Access params are not correct");
 
             dataCenter.AddAccess(access);
             _dbContext.Entry(dataCenter).Collection(x => x.Accesses).IsModified = true;
@@ -54,12 +56,12 @@ namespace CAM.Service.Repository.AccessRepo
 
         public List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto)
         {
-            DataCenter dataCenter = _dbContext.DataCenters.FirstOrDefault(dc => dc.Name == searchAccessDto.DCName) ?? DataCenter.Empty;
+            DataCenter DataCenter = _dbContext.DataCenters.FirstOrDefault(dc => dc.Name == searchAccessDto.SourceDCName) ?? DataCenter.Empty;
 
-            if (dataCenter == DataCenter.Empty)
+            if (DataCenter == DataCenter.Empty)
                 return new List<Access>();
             
-            return  _dbContext.Entry(dataCenter)
+            return  _dbContext.Entry(DataCenter)
                               .Collection(dc => dc.Accesses)
                               .Query()
                               .Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();

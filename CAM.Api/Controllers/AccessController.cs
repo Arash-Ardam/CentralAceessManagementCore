@@ -63,6 +63,13 @@ namespace CAM.Api.Controllers
         public async Task<IActionResult> Search([FromBody] SearchAccessDto searchDto)
         {
             AccessBaseDto mappedDto = _mapper.Map<AccessBaseDto>(searchDto);
+
+            if (searchDto.SourceDCName == string.Empty)
+                mappedDto.FromDCName = mappedDto.ToDCName;
+
+            else if(searchDto.DestinationDCName == string.Empty)
+                mappedDto.ToDCName= mappedDto.FromDCName;
+
             List<Access> searchedAccesses = await _service.SearchAccess(mappedDto);
 
             var result = searchedAccesses.Select(x => _mapper.Map<SearchAccessResultDto>(x)).ToList();

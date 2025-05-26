@@ -26,12 +26,12 @@ namespace CAM.Service.Access_Service
         public async Task<Access> CreateAcceess(AccessBaseDto dto)
         {
             var validatedEntries = await GetValidatedEntries(dto);
-            bool isAccessExist = _accessRepo.AnyAccessExist(validatedEntries.dataCenter, validatedEntries.access, dto.Port);
+            bool isAccessExist = _accessRepo.AnyAccessExist(validatedEntries.searchedDCs, validatedEntries.access, dto.Port);
 
             if (isAccessExist)
                 throw new Exception("Alredy Exist");
 
-           return  await _accessRepo.CreateAccess(validatedEntries.dataCenter, validatedEntries.access);
+           return  await _accessRepo.CreateAccess(validatedEntries.searchedDCs, validatedEntries.access);
         }
 
         public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
@@ -39,7 +39,7 @@ namespace CAM.Service.Access_Service
             var validatedEntries = await GetValidatedEntries(dto);
             var searchAccessDto = new SearchAccessBaseDto()
             {
-                DCName = validatedEntries.dataCenter.Name,
+                SourceDCName = validatedEntries.searchedDCs.Name,
                 Source = validatedEntries.access.Source,
                 Port = validatedEntries.access.Port,
                 Destination = validatedEntries.access.Destination,
@@ -51,7 +51,7 @@ namespace CAM.Service.Access_Service
 
 
         #region Private validation methods
-        private async Task<(DataCenter dataCenter , Access access)> GetValidatedEntries(AccessBaseDto dto) 
+        private async Task<(DataCenter  searchedDCs, Access access)> GetValidatedEntries(AccessBaseDto dto) 
         {
             var searchedDCs = await GetValidatedDataCenters(dto);
 
@@ -95,27 +95,29 @@ namespace CAM.Service.Access_Service
                 .DatabaseEngines
                 .FirstOrDefault(x => x.Name == dto.ToName || x.Address == dto.ToAddress) ?? DatabaseEngine.Empty;
 
-            if (source == DatabaseEngine.Empty)
-                throw new Exception($"No source DbEngine with name: {dto.FromName} Or address : {dto.FromAddress} found");
-            if (destination == DatabaseEngine.Empty)
-                throw new Exception($"No destination DbEngine with name: {dto.ToName} Or address : {dto.ToAddress} found");
+            if (dto.FromName != string.Empty || dto.FromAddress != string.Empty)
+            {
+                if (source == DatabaseEngine.Empty)
+                    throw new Exception($"No source DbEngine with name: {dto.FromName} Or address : {dto.FromAddress} found");
+            }
+            if (dto.ToName != string.Empty || dto.ToAddress!= string.Empty)
+            {
+                if (destination == DatabaseEngine.Empty)
+                    throw new Exception($"No destination DbEngine with name: {dto.ToName} Or address : {dto.ToAddress} found");
+            }
 
             return (source, destination);
         }
 
         private Access GetValidatedAccess(DatabaseEngine source, DatabaseEngine destination, AccessBaseDto dto)
         {
-            string serializedSource = JsonConvert.SerializeObject(source);
-            string serializedDestination = JsonConvert.SerializeObject(destination);
-
-            Access validatedAccess = new Access.Create()
-                .AddSource(serializedSource)
+            return new Access.Create()
+                .AddSource(source)
                 .AddPort(dto.Port)
-                .AddDestination(serializedDestination)
+                .AddDestination(destination)
                 .SetDirection(dto.Direction)
                 .Build();
 
-            return validatedAccess;
         }
 
 

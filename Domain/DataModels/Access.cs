@@ -1,5 +1,6 @@
 ﻿using Domain.DataModels;
 using Domain.Enums;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +25,8 @@ namespace Domain.DataModels
         private Access() { }
         private Access(Create newAccess)
         {
-            Source = newAccess.SourceName;
-            Destination = newAccess.DestinationName;
+            Source = newAccess.Source;
+            Destination = newAccess.Destination;
             Port = newAccess.Port;
             Direction = newAccess.Direction;
         }
@@ -35,14 +36,16 @@ namespace Domain.DataModels
 
         public class Create
         {
-            public string SourceName { get; set; } = string.Empty;
-            public string DestinationName { get; set; } = string.Empty;
+            public string Source { get; set; } = string.Empty;
+            public string Destination { get; set; } = string.Empty;
             public int Port { get; private set; }
             public DatabaseDirection Direction { get; private set; }
 
-            public Create AddSource(string sourceName)
+            public Create AddSource(DatabaseEngine source)
             {
-                SourceName = sourceName;
+                if(source != DatabaseEngine.Empty)
+                    Source = JsonConvert.SerializeObject(source);
+
                 return this;
             }
 
@@ -52,9 +55,10 @@ namespace Domain.DataModels
                 return this;
             }
 
-            public Create AddDestination(string destinationName)
+            public Create AddDestination(DatabaseEngine destination)
             {
-                DestinationName = destinationName;
+                if (destination != DatabaseEngine.Empty)
+                    Destination = JsonConvert.SerializeObject(destination); 
                 return this;
             }
 

@@ -26,8 +26,8 @@ namespace CAM.Api.Mapper
                 .ForMember(dst => dst.Destination, opt => opt.MapFrom<JsonDestinationToDataBaseEngineResolver>());
 
             CreateMap<SearchAccessDto, AccessBaseDto>()
-                .ForMember(x => x.FromDCName, t => t.MapFrom(x => x.DCName))
-                .ForMember(x=>x.ToDCName,t => t.MapFrom(x => x.DCName));
+                .ForMember(x => x.FromDCName, t => t.MapFrom(x => x.SourceDCName))
+                .ForMember(x=>x.ToDCName,t => t.MapFrom(x => x.DestinationDCName));
 
 
         }
