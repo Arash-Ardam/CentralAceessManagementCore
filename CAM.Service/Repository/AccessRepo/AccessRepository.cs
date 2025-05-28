@@ -1,6 +1,7 @@
 ﻿using CAM.Service.Dto;
 using Domain.DataModels;
 using LinqKit;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -56,12 +57,8 @@ namespace CAM.Service.Repository.AccessRepo
 
         public List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto)
         {
-            DataCenter DataCenter = _dbContext.DataCenters.FirstOrDefault(dc => dc.Name == searchAccessDto.SourceDCName) ?? DataCenter.Empty;
-
-            if (DataCenter == DataCenter.Empty)
-                return new List<Access>();
             
-            return  _dbContext.Entry(DataCenter)
+            return  _dbContext.Entry(searchAccessDto.TargetDataCenter)
                               .Collection(dc => dc.Accesses)
                               .Query()
                               .Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();
@@ -70,12 +67,22 @@ namespace CAM.Service.Repository.AccessRepo
         private ExpressionStarter<Access> GetSearchPredicate(SearchAccessBaseDto searchAccessDto)
         {
             var predicate = PredicateBuilder.New<Access>(true);
+
             if (searchAccessDto.HasSource())
                 predicate.And(ac => ac.Source == searchAccessDto.Source);
+
             if (searchAccessDto.HasDestination())
                 predicate.And(ac => ac.Destination == searchAccessDto.Destination);
+
+            if (!searchAccessDto.HasDestination())
+            {
+                if (searchAccessDto.HasDestinationDCName())
+                    predicate.And(ac => searchAccessDto.DestinationDbEs.Contains(ac.Destination));
+            }
+
             if(searchAccessDto.HasPort())
                 predicate.And(ac => ac.Port == searchAccessDto.Port);
+
             if (searchAccessDto.HasDirection())
                 predicate.And(ac => ac.Direction == searchAccessDto.Direction);
 
