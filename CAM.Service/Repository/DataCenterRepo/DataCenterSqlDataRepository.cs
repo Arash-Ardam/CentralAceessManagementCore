@@ -1,4 +1,5 @@
 ﻿using ApplicationDbContext;
+using CAM.Service.Abstractions;
 using CAM.Service.Dto;
 using Domain.DataModels;
 using LinqKit;
@@ -49,61 +50,31 @@ namespace CAM.Service.Repository.DataCenterRepo
             return await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == name);
         }
 
-        public async Task<DataCenter> GetDataCenterWithParams(SearchDCDto dto)
+ 
+
+        public async Task<DataCenter> SearchDataCenter<TPredicator>(SearchDCDto dto) where TPredicator : IPredicateBuilder , new()
         {
             DataCenter dataCenter = DataCenter.Empty;
-            var predicate = GetDbEnginePredicate(dto);
+            var predicateBuilder = new TPredicator();
 
-            if (dto.HasSourceDCName())
-                dataCenter = await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == dto.DCSourceName) ?? dataCenter;
+            var dcPredicate = predicateBuilder.GetDataCenterPredicate(dto);
+            var dbEnginePredicate = predicateBuilder.GetDbEnginePredicate(dto);
+
+            dataCenter = await _dbContext.DataCenters.FirstOrDefaultAsync(dcPredicate) ?? dataCenter;
 
             if (dataCenter != DataCenter.Empty)
             {
                 _dbContext.Entry(dataCenter)
                     .Collection(dc => dc.DatabaseEngines)
                     .Query()
-                    .Where(predicate)
+                    .Where(dbEnginePredicate)
                     .ToList();
             }
 
             return dataCenter;
-
         }
 
-        public async Task<(DataCenter source,DataCenter destination)> SearchSourceAndDestinationDataCenters(SearchDCDto dto)
-        {
-            DataCenter source = DataCenter.Empty;
-            DataCenter destination = DataCenter.Empty;
-            var predicate = GetDbEnginePredicate(dto);
 
-            source = await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == dto.DCSourceName) ?? source;
-
-            if (dto.DCSourceName != dto.DCDestinationName)
-                destination = await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == dto.DCDestinationName) ?? destination;
-
-            if (source != DataCenter.Empty)
-            {
-                _dbContext.Entry(source)
-                    .Collection(dc => dc.DatabaseEngines)
-                    .Query()
-                    .Where(predicate)
-                    .ToList();
-            }
-
-            if (destination != DataCenter.Empty)
-            {
-                _dbContext.Entry(destination)
-                    .Collection(dc => dc.DatabaseEngines)
-                    .Query()
-                    .Where(predicate)
-                    .ToList();
-            }
-
-            if (dto.DCSourceName == dto.DCDestinationName)
-                return (source, source);
-
-            return (source,destination);
-        }
 
         public async Task UpdateDataCenter(string oldName, string newName)
         {
@@ -128,42 +99,14 @@ namespace CAM.Service.Repository.DataCenterRepo
             else throw new Exception();
         }
 
-        private ExpressionStarter<DatabaseEngine> GetDbEnginePredicate(SearchDCDto dCDto)
-        {
-            var dbEnginePredicateBuilder = PredicateBuilder.New<DatabaseEngine>(true);
-
-            if (dCDto.HasAccessSourceName())
-                dbEnginePredicateBuilder.Or(x => x.Name == dCDto.DCAccessSourceName);
-
-            if (dCDto.HasAccessDestinationName())
-                dbEnginePredicateBuilder.Or(x => x.Name == dCDto.DCAccessDestinationName);
-
-            if (dCDto.HasAccessSourceAddress())
-                dbEnginePredicateBuilder.Or(x => x.Address == dCDto.DCAccessSourceAddress);
-
-            if (dCDto.HasAccessDestinationAddress())
-                dbEnginePredicateBuilder.Or(x => x.Address == dCDto.DCAccessDestinationAddress);
-
-            if (dCDto.HasDbEngineName())
-                dbEnginePredicateBuilder.Or(x => x.Name == dCDto.DBEngineName);
-
-            if (dCDto.HasDbEngineAddess())
-                dbEnginePredicateBuilder.Or(x => x.Address == dCDto.DBEngineAddress);
-
-            return dbEnginePredicateBuilder;
-        }
+       
 
         #endregion
-
-
-
-        
 
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
         }
-
 
     }
 }

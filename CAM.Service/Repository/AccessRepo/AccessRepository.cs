@@ -71,13 +71,26 @@ namespace CAM.Service.Repository.AccessRepo
             if (searchAccessDto.HasSource())
                 predicate.And(ac => ac.Source == searchAccessDto.Source);
 
+            if (!searchAccessDto.HasSource())
+            {
+                if (searchAccessDto.HasSourceDCName())
+                {
+                    if (searchAccessDto.SourceDbEs != default)
+                        predicate.And(ac => searchAccessDto.SourceDbEs.Contains(ac.Source));
+                }
+            }
+
             if (searchAccessDto.HasDestination())
                 predicate.And(ac => ac.Destination == searchAccessDto.Destination);
 
             if (!searchAccessDto.HasDestination())
             {
                 if (searchAccessDto.HasDestinationDCName())
-                    predicate.And(ac => searchAccessDto.DestinationDbEs.Contains(ac.Destination));
+                {
+                    if (searchAccessDto.DestinationDbEs != default)
+                        predicate.And(ac => searchAccessDto.DestinationDbEs.Contains(ac.Destination));
+                }
+
             }
 
             if(searchAccessDto.HasPort())

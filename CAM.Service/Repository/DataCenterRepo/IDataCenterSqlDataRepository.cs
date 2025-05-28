@@ -1,4 +1,5 @@
-﻿using CAM.Service.Dto;
+﻿using CAM.Service.Abstractions;
+using CAM.Service.Dto;
 using Domain.DataModels;
 
 namespace CAM.Service.Repository.DataCenterRepo
@@ -9,8 +10,7 @@ namespace CAM.Service.Repository.DataCenterRepo
         Task DeleteDataCenter(string name);
         Task UpdateDataCenter(string oldName, string newName);
         Task<DataCenter> GetDataCenter(string name);
-        Task<DataCenter> GetDataCenterWithParams(SearchDCDto dto);
-        Task<(DataCenter source, DataCenter destination)> SearchSourceAndDestinationDataCenters(SearchDCDto dto);
+        Task<DataCenter> SearchDataCenter<TPredicator>(SearchDCDto dto) where TPredicator : IPredicateBuilder, new();
         Task<List<DataCenter>> GetAllDataCenters();
 
     }

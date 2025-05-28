@@ -1,4 +1,5 @@
-﻿using CAM.Service.Dto;
+﻿using CAM.Service.Abstractions;
+using CAM.Service.Dto;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using LinqKit;
@@ -29,7 +30,7 @@ namespace CAM.Service.Repository.DataBaseRepo
                 .AddDbEngineName(dbEngineName)
                 .Build();
 
-            DataCenter dataCenter = await _dataCenterRepo.GetDataCenterWithParams(searchDCDto);
+            DataCenter dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
 
             if (dataCenter == default)
                 throw new Exception();
@@ -59,7 +60,7 @@ namespace CAM.Service.Repository.DataBaseRepo
                 .AddDbEngineName(dbEngineName)
                 .Build();
 
-            DataCenter dataCenter = await _dataCenterRepo.GetDataCenterWithParams(searchDCDto);
+            DataCenter dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
 
             if (dataCenter == default)
                 throw new Exception();

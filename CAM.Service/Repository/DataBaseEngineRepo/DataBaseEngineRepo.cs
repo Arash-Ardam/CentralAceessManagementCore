@@ -1,4 +1,5 @@
-﻿using CAM.Service.Dto;
+﻿using CAM.Service.Abstractions;
+using CAM.Service.Dto;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using System;
@@ -46,7 +47,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
                 .AddDbEngineAddress(searchDto.Address)
                 .Build();
 
-            DataCenter? dataCenter = await _dataCenterRepo.GetDataCenterWithParams(searchDCDto);
+            DataCenter? dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
 
             if (dataCenter == DataCenter.Empty)
                 return new List<DatabaseEngine>();
@@ -72,7 +73,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
                 .AddDbEngineName(dbEngineName)
                 .Build();
 
-            DataCenter dataCenter = await _dataCenterRepo.GetDataCenterWithParams(searchDCDto);
+            DataCenter dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
 
             if (dataCenter == default)
             {
@@ -99,7 +100,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
                 .AddDbEngineAddress(address)
                 .Build();
 
-            DataCenter dataCenter = await _dataCenterRepo.GetDataCenterWithParams(dCDto);
+            DataCenter dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(dCDto);
 
             if (dataCenter.DatabaseEngines.Count != 0)
             {

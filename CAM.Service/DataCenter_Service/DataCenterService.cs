@@ -1,4 +1,5 @@
-﻿using CAM.Service.Dto;
+﻿using CAM.Service.Abstractions;
+using CAM.Service.Dto;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using System;
@@ -47,7 +48,7 @@ namespace CAM.Service.DataCenter_Service
                 .AddSourceDcName(name)
                 .Build();
 
-            return await _sqlRepo.GetDataCenterWithParams(searchDCDto);
+            return await _sqlRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
         }
     }
 }

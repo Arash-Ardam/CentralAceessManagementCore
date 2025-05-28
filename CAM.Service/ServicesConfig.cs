@@ -1,4 +1,5 @@
-﻿using CAM.Service.Access_Service;
+﻿using CAM.Service.Abstractions;
+using CAM.Service.Access_Service;
 using CAM.Service.DataBase_Service;
 using CAM.Service.DatabaseEngine_Service;
 using CAM.Service.DataCenter_Service;
@@ -23,6 +24,8 @@ namespace CAM.Service
             services.AddScoped<IDataBaseEngineRepo, DataBaseEngineRepo>();
             services.AddScoped<IDataBaseRepo, DataBaseRepo>();
             services.AddScoped<IAccessRepository, AccessRepository>();
+
+            services.AddScoped<AccessValidator>();
 
             services.AddScoped<IDataCenterService, DataCenterService>();
             services.AddScoped<IDatabaseEngineService, DatabaseEngineService>();
