@@ -13,13 +13,11 @@ namespace CAM.Service.Abstractions
 {
     public class AccessValidator
     {
-        private readonly IDataCenterSqlDataRepository _dataCenterSqlRepo;
-        private readonly IAccessRepository _accessRepo;
+        private readonly IRepoUnitOfWork _unitOfWork;
 
-        public AccessValidator(IDataCenterSqlDataRepository dataCenterSqlRepo, IAccessRepository accessRepo)
+        public AccessValidator(IRepoUnitOfWork unitOfWork)
         {
-            _dataCenterSqlRepo = dataCenterSqlRepo;
-            _accessRepo = accessRepo;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<SearchAccessBaseDto> GetValidatedSearchEntry(AccessBaseDto dto)
@@ -73,14 +71,14 @@ namespace CAM.Service.Abstractions
                     .AddAccessDestinationAddress(dto.ToAddress)
                     .Build();
 
-            var sourceDc = await _dataCenterSqlRepo.SearchDataCenter<SourcePredicateBuilder>(searchDto);
-            var destinationDc = await _dataCenterSqlRepo.SearchDataCenter<DestinationPredicateBuilder>(searchDto);
+            var sourceDc = await _unitOfWork.DataCenterRepo.SearchDataCenter<SourcePredicateBuilder>(searchDto);
+            var destinationDc = await _unitOfWork.DataCenterRepo.SearchDataCenter<DestinationPredicateBuilder>(searchDto);
 
-            if (sourceDc == DataCenter.Empty)
-                throw new Exception($"No DataCenter with name: {dto.FromDCName} found");
+            //if (sourceDc == DataCenter.Empty)
+            //    throw new Exception($"No DataCenter with name: {dto.FromDCName} found");
 
-            if (destinationDc == DataCenter.Empty)
-                throw new Exception($"No DataCenter with name: {dto.ToDCName} found");
+            //if (destinationDc == DataCenter.Empty)
+            //    throw new Exception($"No DataCenter with name: {dto.ToDCName} found");
 
             return (sourceDc,destinationDc);
         }

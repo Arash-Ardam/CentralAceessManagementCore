@@ -12,35 +12,35 @@ namespace CAM.Service.DataCenter_Service
 {
     internal class DataCenterService : IDataCenterService
     {
-        private readonly IDataCenterSqlDataRepository _sqlRepo;
-        public DataCenterService(IDataCenterSqlDataRepository repository)
+        private readonly IRepoUnitOfWork _unitOfWork;
+        public DataCenterService(IRepoUnitOfWork unitOfWork)
         {
-            _sqlRepo = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task CreateDataCenterByName(string name)
         {
-            await _sqlRepo.AddDataCenter(DataCenter.CreateByName(name));
+            await _unitOfWork.DataCenterRepo.AddDataCenter(DataCenter.CreateByName(name));
         }
 
         public async Task DeleteDataCenter(string name)
         {
-            await _sqlRepo.DeleteDataCenter(name);
+            await _unitOfWork.DataCenterRepo.DeleteDataCenter(name);
         }
 
         public async Task EditDataCenterName(string oldName, string newName)
         {
-            await _sqlRepo.UpdateDataCenter(oldName, newName);
+            await _unitOfWork.DataCenterRepo.UpdateDataCenter(oldName, newName);
         }
 
         public async Task<List<DataCenter>> GetAllDataCenters()
         {
-            return await _sqlRepo.GetAllDataCenters();
+            return await _unitOfWork.DataCenterRepo.GetAllDataCenters();
         }
 
         public async Task<DataCenter> GetDataCenter(string name)
         {
-            return await _sqlRepo.GetDataCenter(name);
+            return await _unitOfWork.DataCenterRepo.GetDataCenter(name);
         }
         public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
         {
@@ -48,7 +48,7 @@ namespace CAM.Service.DataCenter_Service
                 .AddSourceDcName(name)
                 .Build();
 
-            return await _sqlRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
+            return await _unitOfWork.DataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
         }
     }
 }

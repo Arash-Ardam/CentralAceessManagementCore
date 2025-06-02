@@ -23,6 +23,10 @@ namespace CAM.Service.Dto
         public DatabaseDirection Direction { get; set; } = DatabaseDirection.none;
 
 
+        private static readonly SearchAccessBaseDto _empty = new SearchAccessBaseDto();
+
+        public static SearchAccessBaseDto Empty { get { return _empty; } } 
+
         public bool HasSourceDCName() => SourceDCName != string.Empty;
         public bool HasDestinationDCName() => DestinationDCName != string.Empty;
         public bool HasSource() => Source != string.Empty;

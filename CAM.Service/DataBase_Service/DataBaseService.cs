@@ -1,4 +1,5 @@
-﻿using CAM.Service.Dto;
+﻿using CAM.Service.Abstractions;
+using CAM.Service.Dto;
 using CAM.Service.Repository.DataBaseRepo;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
@@ -12,21 +13,21 @@ namespace CAM.Service.DataBase_Service
 {
     internal class DataBaseService : IDataBaseService
     {
-        private readonly IDataBaseRepo _sqlRepo;
+        private readonly IRepoUnitOfWork _unitOfWork;
 
-        public DataBaseService(IDataBaseRepo repository)
+        public DataBaseService(IRepoUnitOfWork unitOfWork)
         {
-            _sqlRepo = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task AddDataBaseToDataBaseEngine(string dcName, string engineName, string dbName)
         {
-            await _sqlRepo.AddDataBaseToDataBaseEngine(dcName, engineName, dbName);
+            await _unitOfWork.DataBaseRepo.AddDataBaseToDataBaseEngine(dcName, engineName, dbName);
         }
 
         public async Task<List<Database>> SearchDataBase(SearchDataBaseSto searchDto)
         {
-            return await _sqlRepo.SearchDataBase(searchDto.DataCenterName, 
+            return await _unitOfWork.DataBaseRepo.SearchDataBase(searchDto.DataCenterName, 
                 searchDto.DataBaseEngineName, searchDto.DataBaseName);
         }
     }

@@ -57,11 +57,17 @@ namespace CAM.Service.Repository.AccessRepo
 
         public List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto)
         {
-            
-            return  _dbContext.Entry(searchAccessDto.TargetDataCenter)
-                              .Collection(dc => dc.Accesses)
-                              .Query()
-                              .Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();
+            if (searchAccessDto == SearchAccessBaseDto.Empty)
+            {
+                return _dbContext.Access.ToList();
+            }
+
+            return _dbContext.Access.Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();
+
+            //return  _dbContext.Entry(searchAccessDto.TargetDataCenter)
+            //                  .Collection(dc => dc.Accesses)
+            //                  .Query()
+            //                  .Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();
         }
 
         private ExpressionStarter<Access> GetSearchPredicate(SearchAccessBaseDto searchAccessDto)
@@ -73,10 +79,9 @@ namespace CAM.Service.Repository.AccessRepo
 
             if (!searchAccessDto.HasSource())
             {
-                if (searchAccessDto.HasSourceDCName())
+                if (searchAccessDto.HasSourceDCName() && searchAccessDto.SourceDbEs != default)
                 {
-                    if (searchAccessDto.SourceDbEs != default)
-                        predicate.And(ac => searchAccessDto.SourceDbEs.Contains(ac.Source));
+                    predicate.And(ac => searchAccessDto.SourceDbEs.Contains(ac.Source));
                 }
             }
 
@@ -85,12 +90,11 @@ namespace CAM.Service.Repository.AccessRepo
 
             if (!searchAccessDto.HasDestination())
             {
-                if (searchAccessDto.HasDestinationDCName())
+                if (searchAccessDto.HasDestinationDCName() && searchAccessDto.DestinationDCName != searchAccessDto.SourceDCName)
                 {
                     if (searchAccessDto.DestinationDbEs != default)
                         predicate.And(ac => searchAccessDto.DestinationDbEs.Contains(ac.Destination));
                 }
-
             }
 
             if(searchAccessDto.HasPort())

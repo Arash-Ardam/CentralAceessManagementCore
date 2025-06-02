@@ -1,6 +1,5 @@
 ﻿using CAM.Service.Abstractions;
 using CAM.Service.Dto;
-using CAM.Service.Repository.AccessRepo;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using Domain.Enums;
@@ -17,29 +16,29 @@ namespace CAM.Service.Access_Service
     internal class AccessService : IAccessService
     {
         private readonly AccessValidator _validator;
-        private readonly IAccessRepository _accessRepo;
+        private readonly IRepoUnitOfWork _unitOfWork;
 
-        public AccessService(AccessValidator validator, IAccessRepository accessRepo)
+        public AccessService(AccessValidator validator, IRepoUnitOfWork unitOfWork)
         {
             _validator = validator;
-            _accessRepo = accessRepo;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Access> CreateAcceess(AccessBaseDto dto)
         {
             var validatedEntries = await _validator.GetValidatedEntries(dto);
-            bool isAccessExist = _accessRepo.AnyAccessExist(validatedEntries.Source, validatedEntries.ValidatedAccess, dto.Port);
+            bool isAccessExist = _unitOfWork.AccessRepository.AnyAccessExist(validatedEntries.Source, validatedEntries.ValidatedAccess, dto.Port);
 
             if (isAccessExist)
                 throw new Exception("Alredy Exist");
 
-           return  await _accessRepo.CreateAccess(validatedEntries.Source, validatedEntries.ValidatedAccess);
+           return  await _unitOfWork.AccessRepository.CreateAccess(validatedEntries.Source, validatedEntries.ValidatedAccess);
         }
 
         public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
         {
             var searchAccessDto =  await _validator.GetValidatedSearchEntry(dto);
 
-            return _accessRepo.SearchAccess(searchAccessDto);
+            return _unitOfWork.AccessRepository.SearchAccess(searchAccessDto);
         }
 
 

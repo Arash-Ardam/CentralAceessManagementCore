@@ -1,4 +1,5 @@
-﻿using CAM.Service.Dto;
+﻿using CAM.Service.Abstractions;
+using CAM.Service.Dto;
 using CAM.Service.Repository.DataBaseEngineRepo;
 using Domain.DataModels;
 using System;
@@ -12,27 +13,27 @@ namespace CAM.Service.DatabaseEngine_Service
 {
     internal class DatabaseEngineService : IDatabaseEngineService
     {
-        private readonly IDataBaseEngineRepo _sqlRepo;
+        private readonly IRepoUnitOfWork _unitOfWork;
 
-        public DatabaseEngineService(IDataBaseEngineRepo sqlDataRepository)
+        public DatabaseEngineService(IRepoUnitOfWork unitOfWork)
         {
-            _sqlRepo = sqlDataRepository;
+            _unitOfWork = unitOfWork;
         }
 
 
         public async Task AddDatabaseEngine(string dcName, string dbEngineName, string address)
         {
-           await _sqlRepo.AddDataBaseEngine(dcName, dbEngineName, address);
+           await _unitOfWork.DataBaseEngineRepo.AddDataBaseEngine(dcName, dbEngineName, address);
         }
 
         public async Task Remove(string dcName, string engineName)
         {
-            await _sqlRepo.RemoveDataBaseEngine(dcName, engineName);
+            await _unitOfWork.DataBaseEngineRepo.RemoveDataBaseEngine(dcName, engineName);
         }
 
         public Task<List<DatabaseEngine>> Search(SearchDbEngineDto searchDto)
         {
-            return _sqlRepo.SearchDataBaseEngine(searchDto);
+            return _unitOfWork.DataBaseEngineRepo.SearchDataBaseEngine(searchDto);
         }
     }
 }

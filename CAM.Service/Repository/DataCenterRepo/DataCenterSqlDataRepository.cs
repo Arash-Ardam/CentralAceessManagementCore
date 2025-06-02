@@ -51,7 +51,6 @@ namespace CAM.Service.Repository.DataCenterRepo
         }
 
  
-
         public async Task<DataCenter> SearchDataCenter<TPredicator>(SearchDCDto dto) where TPredicator : IPredicateBuilder , new()
         {
             DataCenter dataCenter = DataCenter.Empty;
@@ -73,8 +72,6 @@ namespace CAM.Service.Repository.DataCenterRepo
 
             return dataCenter;
         }
-
-
 
         public async Task UpdateDataCenter(string oldName, string newName)
         {

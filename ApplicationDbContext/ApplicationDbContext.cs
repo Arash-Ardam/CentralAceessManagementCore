@@ -16,7 +16,8 @@ namespace ApplicationDbContext
 
 
         public DbSet<DataCenter> DataCenters { get; set; }
-        
+        public DbSet<Access> Access { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

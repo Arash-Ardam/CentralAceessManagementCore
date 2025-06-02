@@ -20,6 +20,8 @@ namespace CAM.Service
     {
         public static void AddCAMServices(this IServiceCollection services)
         {
+            services.AddScoped<Abstractions.IRepoUnitOfWork, RepoUnitOfWork>();
+
             services.AddScoped<IDataCenterSqlDataRepository,DataCenterSqlDataRepository>();
             services.AddScoped<IDataBaseEngineRepo, DataBaseEngineRepo>();
             services.AddScoped<IDataBaseRepo, DataBaseRepo>();
