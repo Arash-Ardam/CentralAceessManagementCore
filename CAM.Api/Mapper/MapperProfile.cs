@@ -21,36 +21,52 @@ namespace CAM.Api.Mapper
 
             CreateMap<AddOutBoundAccessByAddressDto, AccessBaseDto>();
 
-            CreateMap<Access, SearchAccessResultDto>()
-                .ForMember(src => src.Source,opt => opt.MapFrom<JsonSourceToDataBaseEngineResolver>())
-                .ForMember(dst => dst.Destination, opt => opt.MapFrom<JsonDestinationToDataBaseEngineResolver>());
-
             CreateMap<SearchAccessDto, AccessBaseDto>()
                 .ForMember(x => x.FromDCName, t => t.MapFrom(x => x.SourceDCName))
-                .ForMember(x=>x.ToDCName,t => t.MapFrom(x => x.DestinationDCName));
+                .ForMember(x => x.ToDCName, t => t.MapFrom(x => x.DestinationDCName));
 
+            CreateMap<Access, SearchAccessResultDto>()
+                .ForMember(src => src.Source,opt => opt.MapFrom(new DataBaseEngineResolver<SearchAccessResultDto>(x => x.Source)))
+                .ForMember(dst => dst.Destination, opt => opt.MapFrom(new DataBaseEngineResolver<SearchAccessResultDto>(x => x.Destination)));
 
         }
     }
 
-    public class JsonSourceToDataBaseEngineResolver : IValueResolver<Access, SearchAccessResultDto, DatabaseEngine>
+
+    public class DataBaseEngineResolver<TDestination> : IValueResolver<Access, TDestination, DatabaseEngine>
     {
-        public DatabaseEngine Resolve(Access source, SearchAccessResultDto destination, DatabaseEngine destMember, ResolutionContext context)
+        private readonly Func<Access, object> _propertyAccessor;
+
+        public DataBaseEngineResolver(Func<Access, object> propertyAccessor)
         {
-            return string.IsNullOrWhiteSpace(source.Source)
-                ? DatabaseEngine.Empty
-                : JsonConvert.DeserializeObject<DatabaseEngine>(source.Source);
+            _propertyAccessor = propertyAccessor;
+        }
+
+        public DatabaseEngine Resolve(Access source, TDestination destination, DatabaseEngine destMember, ResolutionContext context)
+        {
+            var value = _propertyAccessor(source).ToString();
+
+            return string.IsNullOrWhiteSpace(value)
+            ? DatabaseEngine.Empty
+            : JsonConvert.DeserializeObject<DatabaseEngine>(source.Destination);
         }
     }
 
-    public class JsonDestinationToDataBaseEngineResolver : IValueResolver<Access, SearchAccessResultDto, DatabaseEngine>
+    public class JsonResolver<TSource, TDestination> : IValueResolver<TSource, TDestination, string>
     {
-        public DatabaseEngine Resolve(Access source, SearchAccessResultDto destination, DatabaseEngine destMember, ResolutionContext context)
+        private readonly Func<TSource, object> _propertyAccessor;
+
+        public JsonResolver(Func<TSource, object> propertyAccessor)
         {
-            return string.IsNullOrWhiteSpace(source.Destination)
-                ? DatabaseEngine.Empty
-                : JsonConvert.DeserializeObject<DatabaseEngine>(source.Destination);
+            _propertyAccessor = propertyAccessor;
+        }
+
+        public string Resolve(TSource source, TDestination destination, string destMember, ResolutionContext context)
+        {
+            var value = _propertyAccessor(source);
+            return JsonConvert.SerializeObject(value);
         }
     }
+
 
 }
