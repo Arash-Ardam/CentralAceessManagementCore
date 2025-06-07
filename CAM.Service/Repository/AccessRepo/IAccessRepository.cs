@@ -11,8 +11,10 @@ namespace CAM.Service.Repository.AccessRepo
     public interface IAccessRepository
     {
         Task<Access> CreateAccess(DataCenter dataCenter, Access access);
-        Task<Access> RemoveAccess(string dataCenterName, Access access);
-        Access? GetAccess(short id); 
+        Task RemoveAccess(Access access);
+        Task RemoveRangeOfAccesses(List<Access> accessList);
+        Access? GetAccess(short id);
+        List<Access> GetRangeAccessByDbEngine(string jsonDbEngine);
         List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto);
 
         bool AnyAccessExist(DataCenter dataCenter, Access access, int port);

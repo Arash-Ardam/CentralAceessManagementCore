@@ -1,6 +1,7 @@
 ﻿using CAM.Service.Dto;
 using Domain.DataModels;
 using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,11 @@ namespace CAM.Service.Repository.AccessRepo
             return _dbContext.Access.FirstOrDefault(ac => ac.Id == id );
         }
 
+        public List<Access> GetRangeAccessByDbEngine(string jsonDbEngine)
+        {
+            return _dbContext.Access.Where(ac => ac.Source == jsonDbEngine || ac.Destination == jsonDbEngine).ToList();
+        }
+
         public bool AnyAccessExist(DataCenter dataCenter, Access access, int port)
         {
             return _dbContext
@@ -45,9 +51,18 @@ namespace CAM.Service.Repository.AccessRepo
                 .Any(ac => ac.Source == access.Source && ac.Destination == access.Destination && ac.Port == port);
         }
 
-        public Task<Access> RemoveAccess(string dataCenterName, Access access)
+        public async Task RemoveAccess(Access entry)
         {
-            throw new NotImplementedException();
+            _dbContext.Access.Remove(entry);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveRangeOfAccesses(List<Access> accessList)
+        {
+            _dbContext.Access.RemoveRange(accessList);
+
+            await _dbContext.SaveChangesAsync();
         }
 
         public List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto)

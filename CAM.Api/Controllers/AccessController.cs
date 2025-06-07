@@ -82,11 +82,19 @@ namespace CAM.Api.Controllers
             return Ok(_mapper.Map<SearchAccessResultDto>(response));
         }
 
-        //[HttpDelete("[action]/{id}")]
-        //public async Task<IActionResult> RemoveAccess(int id)
-        //{
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> Delete(short id)
+        {
+            Access entry = await _service.GetAccess(id) ?? Access.Empty;
+            if (entry == Access.Empty)
+            {
+                return NotFound($"Access with id : {id} not found");
+            }
 
-        //}
+            await _service.RemoveAccess(entry);
+            return Accepted(entry);
+
+        }
 
     }
 }

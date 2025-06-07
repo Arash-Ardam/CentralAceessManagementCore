@@ -1,10 +1,13 @@
 ﻿
+using AutoMapper;
 using CAM.Api.Dtos;
+using CAM.Service.Access_Service;
 using CAM.Service.DatabaseEngine_Service;
 using CAM.Service.DataCenter_Service;
 using CAM.Service.Dto;
 using Domain.DataModels;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Reflection;
 
 namespace CAM.Api.Controllers
@@ -12,12 +15,18 @@ namespace CAM.Api.Controllers
     public class DataBaseEngineController : ApiControllerBase
     {
         private readonly IDatabaseEngineService _dbEngineService;
+        private readonly IAccessService _accessService;
+        private readonly IMapper _mapper;
 
         public DataBaseEngineController(
             IDatabaseEngineService engineService,
+            IAccessService accessService,
+            IMapper mapper,
             ILogger<ApiControllerBase> logger) : base(logger)
         {
             _dbEngineService = engineService;
+            _accessService = accessService;
+            _mapper = mapper;
         }
 
 
@@ -55,7 +64,14 @@ namespace CAM.Api.Controllers
             if (string.IsNullOrEmpty(engineName))
                 return BadRequest(string.Format(Messages.StringNullOrWhiteSpace, "DataBaseEngine"));
 
+            var entry = await _dbEngineService.Search(new SearchDbEngineDto() {dcName = dcName , dbEngineName = engineName });
+            if (entry.Count == 0)
+                return NotFound($"DbEngine with name: {engineName} not found");
+
+            List<Access> relatedAccesses = _accessService.GetAccessesByDbEngine(entry[0]);
+
             await _dbEngineService.Remove(dcName, engineName);
+            await _accessService.RemoveAccessInRange(relatedAccesses);
             return Accepted();
 
         }

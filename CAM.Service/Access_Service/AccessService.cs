@@ -44,9 +44,20 @@ namespace CAM.Service.Access_Service
             return Task.FromResult(result);
         }
 
-        public Task RemoveAccess(AccessBaseDto dto)
+        public List<Access> GetAccessesByDbEngine(DatabaseEngine databaseEngine)
         {
-            throw new NotImplementedException();
+            string jsonDbEngine = JsonConvert.SerializeObject(databaseEngine);
+            return _unitOfWork.AccessRepository.GetRangeAccessByDbEngine(jsonDbEngine);
+        }
+
+        public async Task RemoveAccess(Access entry)
+        {
+            await _unitOfWork.AccessRepository.RemoveAccess(entry);
+        }
+
+        public async Task RemoveAccessInRange(List<Access> accessList)
+        {
+            await _unitOfWork.AccessRepository.RemoveRangeOfAccesses(accessList);
         }
 
         public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
