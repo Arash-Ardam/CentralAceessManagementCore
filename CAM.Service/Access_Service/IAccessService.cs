@@ -12,5 +12,9 @@ namespace CAM.Service.Access_Service
     {
         Task<Access> CreateAcceess(AccessBaseDto dto);
         Task<List<Access>> SearchAccess(AccessBaseDto dto);
+
+        Task<Access> GetAccess(short id);
+
+        Task RemoveAccess(AccessBaseDto dto);   
     }
 }

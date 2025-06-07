@@ -12,9 +12,8 @@ namespace CAM.Service.Repository.AccessRepo
     {
         Task<Access> CreateAccess(DataCenter dataCenter, Access access);
         Task<Access> RemoveAccess(string dataCenterName, Access access);
+        Access? GetAccess(short id); 
         List<Access> SearchAccess(SearchAccessBaseDto searchAccessDto);
-        Task<List<Access>> GetAllAccesses();
-        Task<List<Access>> GetAllAccessesForDC(string dataCenterName);
 
         bool AnyAccessExist(DataCenter dataCenter, Access access, int port);
 

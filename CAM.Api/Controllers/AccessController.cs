@@ -74,5 +74,19 @@ namespace CAM.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Detail(short id)
+        {
+            Access response = await _service.GetAccess(id);
+
+            return Ok(_mapper.Map<SearchAccessResultDto>(response));
+        }
+
+        //[HttpDelete("[action]/{id}")]
+        //public async Task<IActionResult> RemoveAccess(int id)
+        //{
+
+        //}
+
     }
 }

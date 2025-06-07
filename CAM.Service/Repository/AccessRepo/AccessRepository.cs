@@ -31,6 +31,11 @@ namespace CAM.Service.Repository.AccessRepo
             return access;
         }
 
+        public Access? GetAccess(short id)
+        {
+            return _dbContext.Access.FirstOrDefault(ac => ac.Id == id );
+        }
+
         public bool AnyAccessExist(DataCenter dataCenter, Access access, int port)
         {
             return _dbContext
@@ -38,16 +43,6 @@ namespace CAM.Service.Repository.AccessRepo
                 .Collection(dc => dc.Accesses)
                 .Query()
                 .Any(ac => ac.Source == access.Source && ac.Destination == access.Destination && ac.Port == port);
-        }
-
-        public Task<List<Access>> GetAllAccesses()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Access>> GetAllAccessesForDC(string dataCenterName)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<Access> RemoveAccess(string dataCenterName, Access access)
@@ -63,11 +58,6 @@ namespace CAM.Service.Repository.AccessRepo
             }
 
             return _dbContext.Access.Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();
-
-            //return  _dbContext.Entry(searchAccessDto.TargetDataCenter)
-            //                  .Collection(dc => dc.Accesses)
-            //                  .Query()
-            //                  .Where(GetSearchPredicate(searchAccessDto)).ToList() ?? new List<Access>();
         }
 
         private ExpressionStarter<Access> GetSearchPredicate(SearchAccessBaseDto searchAccessDto)
@@ -105,6 +95,7 @@ namespace CAM.Service.Repository.AccessRepo
 
             return predicate;
         }
+
 
     }
 }

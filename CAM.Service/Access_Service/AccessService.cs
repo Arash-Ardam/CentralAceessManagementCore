@@ -34,6 +34,21 @@ namespace CAM.Service.Access_Service
            return  await _unitOfWork.AccessRepository.CreateAccess(validatedEntries.Source, validatedEntries.ValidatedAccess);
         }
 
+        public Task<Access> GetAccess(short id)
+        {
+            var result = _unitOfWork.AccessRepository.GetAccess(id);
+
+            if (result == default)
+                return Task.FromResult(Access.Empty);
+
+            return Task.FromResult(result);
+        }
+
+        public Task RemoveAccess(AccessBaseDto dto)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
         {
             var searchAccessDto =  await _validator.GetValidatedSearchEntry(dto);
