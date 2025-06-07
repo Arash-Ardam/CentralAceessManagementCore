@@ -48,7 +48,7 @@ namespace CAM.Api.Mapper
 
             return string.IsNullOrWhiteSpace(value)
             ? DatabaseEngine.Empty
-            : JsonConvert.DeserializeObject<DatabaseEngine>(source.Destination);
+            : JsonConvert.DeserializeObject<DatabaseEngine>(value);
         }
     }
 

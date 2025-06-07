@@ -74,8 +74,8 @@ namespace CAM.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> Detail(short id)
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> Details(short id)
         {
             Access response = await _service.GetAccess(id);
 
