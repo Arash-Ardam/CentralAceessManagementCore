@@ -14,8 +14,8 @@ namespace ApplicationDbContext.EntityConfigs
         public static void AddCAMDbContext(this IServiceCollection services, IConfiguration configuration)
         {
 
-            var config = configuration.GetRequiredSection("DbContextConfigEntry");
-            var dbOptions = config.Get<DbContextConfigEntry>();
+            var config = configuration.GetRequiredSection("WriteDbContextConfigEntry");
+            var dbOptions = config.Get<WriteDbContextConfigEntry>();
             if (default == dbOptions)
             {
                 throw new NullReferenceException(nameof(dbOptions));
@@ -38,7 +38,7 @@ namespace ApplicationDbContext.EntityConfigs
         }
     }
 
-    public class DbContextConfigEntry
+    public class WriteDbContextConfigEntry
     {
         public bool isEnabled { get; set; }
         public sqlServer sqlServer { get; set; } = new sqlServer();
