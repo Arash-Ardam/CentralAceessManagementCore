@@ -8,6 +8,7 @@ using CAM.Service.Repository.DataBaseEngineRepo;
 using CAM.Service.Repository.DataBaseRepo;
 using CAM.Service.Repository.DataCenterRepo;
 using Microsoft.Extensions.DependencyInjection;
+using ReadSqlDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +21,15 @@ namespace CAM.Service
     {
         public static void AddCAMServices(this IServiceCollection services)
         {
-            services.AddScoped<Abstractions.IRepoUnitOfWork, RepoUnitOfWork>();
+            services.AddScoped<IRepoUnitOfWork, RepoUnitOfWork>();
 
             services.AddScoped<IDataCenterSqlDataRepository,DataCenterSqlDataRepository>();
             services.AddScoped<IDataBaseEngineRepo, DataBaseEngineRepo>();
             services.AddScoped<IDataBaseRepo, DataBaseRepo>();
             services.AddScoped<IAccessRepository, AccessRepository>();
+
+            services.AddSingleton<IReadDataAccess,ReadDataAccess>();
+            services.AddScoped<IReadDataCenterRepository, ReadDataCenterRepository>();
 
             services.AddScoped<AccessValidator>();
 

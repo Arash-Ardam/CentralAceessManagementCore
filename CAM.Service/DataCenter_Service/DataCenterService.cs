@@ -1,7 +1,10 @@
 ﻿using CAM.Service.Abstractions;
+using CAM.Service.DataCenter_Service.Handlers;
+using CAM.Service.DataCenter_Service.Queries;
 using CAM.Service.Dto;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +16,12 @@ namespace CAM.Service.DataCenter_Service
     internal class DataCenterService : IDataCenterService
     {
         private readonly IRepoUnitOfWork _unitOfWork;
-        public DataCenterService(IRepoUnitOfWork unitOfWork)
+        private readonly IMediator _mediator;
+
+        public DataCenterService(IRepoUnitOfWork unitOfWork, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
 
         public async Task CreateDataCenterByName(string name)
@@ -40,7 +46,7 @@ namespace CAM.Service.DataCenter_Service
 
         public async Task<DataCenter> GetDataCenter(string name)
         {
-            return await _unitOfWork.DataCenterRepo.GetDataCenter(name);
+            return await _mediator.Send(new GetByNameQuery(name)); 
         }
         public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
         {
