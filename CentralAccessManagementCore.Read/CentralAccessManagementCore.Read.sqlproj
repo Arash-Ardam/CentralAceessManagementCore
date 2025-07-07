@@ -65,6 +65,8 @@
     <Build Include="dbo\Tables\DataCenter.sql" />
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_GetAll.sql" />
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_Get.sql" />
+    <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_Delete.sql" />
+    <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_Add.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CentralAccessManagementCore.Read.publish.xml" />

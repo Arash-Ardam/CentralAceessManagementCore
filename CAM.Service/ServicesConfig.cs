@@ -6,7 +6,9 @@ using CAM.Service.DataCenter_Service;
 using CAM.Service.Repository.AccessRepo;
 using CAM.Service.Repository.DataBaseEngineRepo;
 using CAM.Service.Repository.DataBaseRepo;
-using CAM.Service.Repository.DataCenterRepo;
+using CAM.Service.Repository.DataCenterRepo.ReadRepo;
+using CAM.Service.Repository.DataCenterRepo.SyncRepo;
+using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Microsoft.Extensions.DependencyInjection;
 using ReadSqlDataAccess;
 using System;
@@ -23,16 +25,22 @@ namespace CAM.Service
         {
             services.AddScoped<IRepoUnitOfWork, RepoUnitOfWork>();
 
+            //write repos
             services.AddScoped<IDataCenterSqlDataRepository,DataCenterSqlDataRepository>();
             services.AddScoped<IDataBaseEngineRepo, DataBaseEngineRepo>();
             services.AddScoped<IDataBaseRepo, DataBaseRepo>();
             services.AddScoped<IAccessRepository, AccessRepository>();
 
+            //read repos
             services.AddSingleton<IReadDataAccess,ReadDataAccess>();
             services.AddScoped<IReadDataCenterRepository, ReadDataCenterRepository>();
 
+            //sync repos
+            services.AddScoped<IDataCenterSyncRepository, DataCenterSyncRepository>();
+
             services.AddScoped<AccessValidator>();
 
+            //services
             services.AddScoped<IDataCenterService, DataCenterService>();
             services.AddScoped<IDatabaseEngineService, DatabaseEngineService>();
             services.AddScoped<IDataBaseService,DataBaseService>();

@@ -1,9 +1,12 @@
 ﻿using ApplicationDbContext;
+using ApplicationDbContext.Migrations;
 using CAM.Service.Abstractions;
 using CAM.Service.Dto;
 using Domain.DataModels;
 using LinqKit;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ReadSqlDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +14,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace CAM.Service.Repository.DataCenterRepo
+namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
 {
     internal class DataCenterSqlDataRepository : IDataCenterSqlDataRepository
     {
         private readonly ApplicationDbContext.ApplicationDbContext _dbContext;
+        private readonly IMediator _mediator;
 
-        public DataCenterSqlDataRepository(ApplicationDbContext.ApplicationDbContext dbContext)
+        public DataCenterSqlDataRepository(ApplicationDbContext.ApplicationDbContext applicationDbContext, IMediator mediator)
         {
-            _dbContext = dbContext;
+            _dbContext = applicationDbContext;
+            _mediator = mediator;
         }
+
 
         #region DataCenter
 
@@ -50,8 +56,8 @@ namespace CAM.Service.Repository.DataCenterRepo
             return await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == name);
         }
 
- 
-        public async Task<DataCenter> SearchDataCenter<TPredicator>(SearchDCDto dto) where TPredicator : IPredicateBuilder , new()
+
+        public async Task<DataCenter> SearchDataCenter<TPredicator>(SearchDCDto dto) where TPredicator : IPredicateBuilder, new()
         {
             DataCenter dataCenter = DataCenter.Empty;
             var predicateBuilder = new TPredicator();
@@ -92,18 +98,19 @@ namespace CAM.Service.Repository.DataCenterRepo
             {
                 _dbContext.DataCenters.Remove(existEntity);
                 await SaveChangesAsync();
+
             }
             else throw new Exception();
         }
 
-       
+
 
         #endregion
-
-        public async Task SaveChangesAsync()
+        private async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
         }
+
 
     }
 }

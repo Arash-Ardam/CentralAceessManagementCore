@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CAM.Service.DataCenter_Service.Queries
 {
-    public record GetByNameQuery(string name) : IRequest<DataCenter>
+    public record GetDataCenterByNameQuery(string name) : IRequest<DataCenter>
     {
     }
 }

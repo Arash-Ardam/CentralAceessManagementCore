@@ -1,6 +1,6 @@
 ﻿using CAM.Service.Abstractions;
 using CAM.Service.Dto;
-using CAM.Service.Repository.DataCenterRepo;
+using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Domain.DataModels;
 using LinqKit;
 using System;

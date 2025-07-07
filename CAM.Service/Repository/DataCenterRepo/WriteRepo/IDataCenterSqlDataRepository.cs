@@ -2,7 +2,7 @@
 using CAM.Service.Dto;
 using Domain.DataModels;
 
-namespace CAM.Service.Repository.DataCenterRepo
+namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
 {
     public interface IDataCenterSqlDataRepository
     {

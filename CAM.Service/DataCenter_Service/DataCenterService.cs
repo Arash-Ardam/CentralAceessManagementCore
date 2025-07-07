@@ -1,4 +1,5 @@
 ﻿using CAM.Service.Abstractions;
+using CAM.Service.DataCenter_Service.Commands;
 using CAM.Service.DataCenter_Service.Handlers;
 using CAM.Service.DataCenter_Service.Queries;
 using CAM.Service.Dto;
@@ -26,7 +27,9 @@ namespace CAM.Service.DataCenter_Service
 
         public async Task CreateDataCenterByName(string name)
         {
-            await _unitOfWork.DataCenterRepo.AddDataCenter(DataCenter.CreateByName(name));
+            await _mediator.Send(new AddDataCenterByNameCommand(name));
+            await _mediator.Send(new SyncDataCenterCommand(name));
+            //_ = Task.Run(() => _mediator.Send(new SyncDataCenterCommand(name)));
         }
 
         public async Task DeleteDataCenter(string name)
@@ -46,7 +49,7 @@ namespace CAM.Service.DataCenter_Service
 
         public async Task<DataCenter> GetDataCenter(string name)
         {
-            return await _mediator.Send(new GetByNameQuery(name)); 
+            return await _mediator.Send(new GetDataCenterByNameQuery(name)); 
         }
         public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
         {
@@ -56,5 +59,9 @@ namespace CAM.Service.DataCenter_Service
 
             return await _unitOfWork.DataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
         }
+
+
+
+
     }
 }

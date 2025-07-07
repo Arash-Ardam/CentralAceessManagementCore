@@ -1,10 +1,13 @@
 ﻿using Domain.DataModels;
 
-namespace CAM.Service.Repository.DataCenterRepo
+namespace CAM.Service.Repository.DataCenterRepo.ReadRepo
 {
     public interface IReadDataCenterRepository
     {
         Task<DataCenter?> GetDataCenter(string name);
 
+        Task AddDataCenter(string name);
+
+        Task DeleteDataCenter(string name);
     }
 }

@@ -18,9 +18,4 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DataCenter_Service\Commands\" />
-    <Folder Include="DataCenter_Service\Handlers\Write\" />
-  </ItemGroup>
-
 </Project>
