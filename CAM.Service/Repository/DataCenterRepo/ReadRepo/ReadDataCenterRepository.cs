@@ -27,9 +27,15 @@ namespace CAM.Service.Repository.DataCenterRepo.ReadRepo
         public async Task DeleteDataCenter(string name)
         {
             var dataCenter = await GetDataCenter(name);
-            if (dataCenter == default)
+            if (dataCenter != DataCenter.Empty)
                 await _readDataAccess.SaveData("spDataCenter_Delete", new { name = name });
 
+        }
+
+        public async Task<List<DataCenter>> GetAllDataCenters()
+        {
+            var dataCenters = await _readDataAccess.LoadData<DataCenter, dynamic>("spDataCenter_GetAll", new {});
+            return dataCenters.ToList();
         }
 
         public async Task<DataCenter?> GetDataCenter(string name)

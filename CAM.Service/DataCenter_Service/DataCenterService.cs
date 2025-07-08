@@ -28,13 +28,15 @@ namespace CAM.Service.DataCenter_Service
         public async Task CreateDataCenterByName(string name)
         {
             await _mediator.Send(new AddDataCenterByNameCommand(name));
+          
             await _mediator.Send(new SyncDataCenterCommand(name));
-            //_ = Task.Run(() => _mediator.Send(new SyncDataCenterCommand(name)));
         }
 
         public async Task DeleteDataCenter(string name)
         {
-            await _unitOfWork.DataCenterRepo.DeleteDataCenter(name);
+            await _mediator.Send(new DeleteDataCenterByNameCommand(name));
+
+            await _mediator.Send(new SyncDataCenterCommand(name));
         }
 
         public async Task EditDataCenterName(string oldName, string newName)
@@ -44,7 +46,7 @@ namespace CAM.Service.DataCenter_Service
 
         public async Task<List<DataCenter>> GetAllDataCenters()
         {
-            return await _unitOfWork.DataCenterRepo.GetAllDataCenters();
+            return await _mediator.Send(new GetAllDataCentersQuery());
         }
 
         public async Task<DataCenter> GetDataCenter(string name)
