@@ -8,8 +8,12 @@ namespace CAM.Service.Repository.DataCenterRepo.ReadRepo
 
         Task<DataCenter?> GetDataCenter(string name);
 
+        Task<DataCenter> GetDataCenterWithDatabaseEngines(string name);
+
         Task AddDataCenter(string name);
 
         Task DeleteDataCenter(string name);
+
+
     }
 }

@@ -55,11 +55,13 @@ namespace CAM.Service.DataCenter_Service
         }
         public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
         {
-            SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddSourceDcName(name)
-                .Build();
+            //SearchDCDto searchDCDto = new SearchDCDto.Create()
+            //    .AddSourceDcName(name)
+            //    .Build();
 
-            return await _unitOfWork.DataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
+            
+            
+            return await _mediator.Send(new GetDataCenterWithDatabaseEnginesQuery(name));
         }
 
 

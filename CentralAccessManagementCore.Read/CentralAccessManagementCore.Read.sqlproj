@@ -67,8 +67,13 @@
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_Get.sql" />
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_Delete.sql" />
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_Add.sql" />
+    <Build Include="dbo\Tables\DataBaseEngine.sql" />
+    <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_GetWithDataBaseEngines.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CentralAccessManagementCore.Read.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="CentralAccessManagementCore.Read.refactorlog" />
   </ItemGroup>
 </Project>

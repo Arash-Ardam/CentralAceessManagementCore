@@ -44,5 +44,18 @@ namespace CAM.Service.Repository.DataCenterRepo.ReadRepo
             return dataCenters.FirstOrDefault();
         }
 
+        public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
+        {
+            var dataCenterResults = await _readDataAccess.LoadData<DataCenter, dynamic>("spDataCenter_Get", new { name });
+            var dataCenter = dataCenterResults.FirstOrDefault() ?? DataCenter.Empty;   
+
+            dataCenter.DatabaseEngines =  _readDataAccess.LoadData<DatabaseEngine, dynamic>(
+                "spDataCenter_GetWithDataBaseEngines",
+                new { name })
+                .Result
+                .ToList();
+
+            return dataCenter ?? DataCenter.Empty;
+        }
     }
 }
