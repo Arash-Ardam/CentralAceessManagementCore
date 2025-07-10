@@ -60,6 +60,7 @@
     <Folder Include="dbo\Tables" />
     <Folder Include="Stored Procedures" />
     <Folder Include="Stored Procedures\DataCenter Stored Procedures" />
+    <Folder Include="Stored Procedures\DataBaseEngine Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\DataCenter.sql" />
@@ -69,6 +70,8 @@
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_Add.sql" />
     <Build Include="dbo\Tables\DataBaseEngine.sql" />
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_GetWithDataBaseEngines.sql" />
+    <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDataBaseEngine_Add.sql" />
+    <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDatabaseEngine_Delete.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CentralAccessManagementCore.Read.publish.xml" />

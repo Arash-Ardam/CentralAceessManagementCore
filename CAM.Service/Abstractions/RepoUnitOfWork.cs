@@ -1,5 +1,5 @@
 ﻿using CAM.Service.Repository.AccessRepo;
-using CAM.Service.Repository.DataBaseEngineRepo;
+using CAM.Service.Repository.DataBaseEngineRepo.WriteRepo;
 using CAM.Service.Repository.DataBaseRepo;
 using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Microsoft.Extensions.DependencyInjection;
