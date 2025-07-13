@@ -2,7 +2,6 @@
 using CAM.Service.Repository.DataCenterRepo.ReadRepo;
 using Domain.DataModels;
 using MediatR;
-using ReadSqlDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;

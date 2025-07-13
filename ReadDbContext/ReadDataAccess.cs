@@ -1,20 +1,23 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace ReadSqlDataAccess;
+namespace ReadDbContext;
 
 internal class ReadDataAccess : IReadDataAccess
 {
-    private readonly IOptions<ReadDbContextConfigEntry> _options;
 
-    private readonly ReadDbContextConfigEntry _readConfigs;
+    private readonly ReadDbContextConfigEntry? _readConfigs;
 
-    public ReadDataAccess(IOptions<ReadDbContextConfigEntry> options)
+    public ReadDataAccess(IServiceProvider serviceProvider)
     {
-        _options = options;
-        _readConfigs = _options.Value;
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var config = configuration.GetRequiredSection(nameof(ReadDbContextConfigEntry));
+
+        _readConfigs = config.Get<ReadDbContextConfigEntry>(); 
     }
 
 

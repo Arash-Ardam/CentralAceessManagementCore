@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApplicationDbContext\ApplicationDbContext.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\ReadDbContext\ReadDbContext.csproj" />
   </ItemGroup>
 
 </Project>

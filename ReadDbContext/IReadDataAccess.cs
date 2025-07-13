@@ -1,5 +1,5 @@
 ﻿
-namespace ReadSqlDataAccess;
+namespace ReadDbContext;
 
 public interface IReadDataAccess
 {

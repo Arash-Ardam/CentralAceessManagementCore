@@ -6,7 +6,6 @@ using Domain.DataModels;
 using LinqKit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ReadSqlDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +18,10 @@ namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
     internal class DataCenterSqlDataRepository : IDataCenterSqlDataRepository
     {
         private readonly ApplicationDbContext.ApplicationDbContext _dbContext;
-        private readonly IMediator _mediator;
 
         public DataCenterSqlDataRepository(ApplicationDbContext.ApplicationDbContext applicationDbContext, IMediator mediator)
         {
             _dbContext = applicationDbContext;
-            _mediator = mediator;
         }
 
 

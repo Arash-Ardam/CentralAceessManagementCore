@@ -1,7 +1,7 @@
 using ApplicationDbContext.EntityConfigs;
 using CAM.Api.Mapper;
 using CAM.Service;
-using ReadSqlDataAccess;
+using ReadDbContext;
 
 namespace CAM.Api
 {
@@ -18,8 +18,8 @@ namespace CAM.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddCAMDbContext(builder.Configuration);
-            builder.Services.Configure<ReadDbContextConfigEntry>(
-                        builder.Configuration.GetSection("ReadDbContextConfigEntry"));
+            builder.Services.AddCAMReadDbContext();
+
 
             builder.Services.AddMediatR(cnfg => cnfg.RegisterServicesFromAssembly(typeof(ServicesConfig).Assembly));
             builder.Services.AddCAMServices();

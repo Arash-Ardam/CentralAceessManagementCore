@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAM.Service", "CAM.Service\
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CentralAccessManagementCore.Read", "CentralAccessManagementCore.Read\CentralAccessManagementCore.Read.sqlproj", "{F2EBEDF3-DC9F-42A3-8BA9-4BE8FECF4A43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadDbContext", "ReadDbContext\ReadDbContext.csproj", "{8153D240-3409-4C6A-B814-88835B95462C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{F2EBEDF3-DC9F-42A3-8BA9-4BE8FECF4A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2EBEDF3-DC9F-42A3-8BA9-4BE8FECF4A43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2EBEDF3-DC9F-42A3-8BA9-4BE8FECF4A43}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8153D240-3409-4C6A-B814-88835B95462C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8153D240-3409-4C6A-B814-88835B95462C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8153D240-3409-4C6A-B814-88835B95462C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8153D240-3409-4C6A-B814-88835B95462C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{D7CC55FF-1D5C-497A-B868-3E83B5F79EB7} = {DD7DE622-546A-458E-A7CB-2EF2E37966BA}
 		{DBE956D9-E773-4B0D-9B11-CAA6126B0F29} = {BD5EA296-216A-401C-8B8B-4A924C1774FD}
 		{F2EBEDF3-DC9F-42A3-8BA9-4BE8FECF4A43} = {BD5EA296-216A-401C-8B8B-4A924C1774FD}
+		{8153D240-3409-4C6A-B814-88835B95462C} = {BD5EA296-216A-401C-8B8B-4A924C1774FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12B2DB38-FFEE-4F44-8BE0-5B5634950512}

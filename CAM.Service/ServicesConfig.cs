@@ -11,7 +11,6 @@ using CAM.Service.Repository.DataBaseRepo;
 using CAM.Service.Repository.DataCenterRepo.ReadRepo;
 using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Microsoft.Extensions.DependencyInjection;
-using ReadSqlDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +32,6 @@ namespace CAM.Service
             services.AddScoped<IAccessRepository, AccessRepository>();
 
             //read repos
-            services.AddSingleton<IReadDataAccess,ReadDataAccess>();
             services.AddScoped<IReadDataCenterRepository, ReadDataCenterRepository>();
             services.AddScoped<IReadDataBaseEngineRepo, ReadDataBaseEngineRepo>();
 
