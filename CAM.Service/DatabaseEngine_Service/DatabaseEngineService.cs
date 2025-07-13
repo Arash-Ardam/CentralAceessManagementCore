@@ -29,13 +29,11 @@ namespace CAM.Service.DatabaseEngine_Service
         public async Task AddDatabaseEngine(string dcName, string dbEngineName, string address)
         {
             await _mediator.Send(new AddDataBaseEngineCommand(dcName, dbEngineName, address));
-            await _mediator.Send(new SyncDataBaseEngineCommand(dbEngineName, address, dcName));
         }
 
         public async Task Remove(string dcName, string engineName)
         {
             await _mediator.Send(new DeleteDataBaseEngineCommand(dcName, engineName));
-            await _mediator.Send(new SyncDataBaseEngineCommand(engineName, string.Empty, dcName));
 
         }
 
