@@ -28,15 +28,11 @@ namespace CAM.Service.DataCenter_Service
         public async Task CreateDataCenterByName(string name)
         {
             await _mediator.Send(new AddDataCenterByNameCommand(name));
-          
-            await _mediator.Send(new SyncDataCenterCommand(name));
         }
 
         public async Task DeleteDataCenter(string name)
         {
             await _mediator.Send(new DeleteDataCenterByNameCommand(name));
-
-            await _mediator.Send(new SyncDataCenterCommand(name));
         }
 
         public async Task EditDataCenterName(string oldName, string newName)

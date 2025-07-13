@@ -10,7 +10,6 @@ using CAM.Service.Repository.DataBaseEngineRepo.SyncRepo;
 using CAM.Service.Repository.DataBaseEngineRepo.WriteRepo;
 using CAM.Service.Repository.DataBaseRepo;
 using CAM.Service.Repository.DataCenterRepo.ReadRepo;
-using CAM.Service.Repository.DataCenterRepo.SyncRepo;
 using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Microsoft.Extensions.DependencyInjection;
 using ReadSqlDataAccess;
@@ -40,7 +39,6 @@ namespace CAM.Service
             services.AddScoped<IReadDataBaseEngineRepo, ReadDataBaseEngineRepo>();
 
             //sync repos
-            services.AddScoped<IDataCenterSyncRepository, DataCenterSyncRepository>();
             services.AddScoped<ISyncDatabaseEngineRepo, SyncDataBaseEngineRepo>();
 
 

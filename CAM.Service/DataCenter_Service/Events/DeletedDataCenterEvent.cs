@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CAM.Service.DataCenter_Service.Commands
+namespace CAM.Service.DataCenter_Service.Events
 {
-    public record SyncDataCenterCommand(string name) : IRequest
+    public record DeletedDataCenterEvent(string name) : INotification
     {
     }
 }
