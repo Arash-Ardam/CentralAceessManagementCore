@@ -1,4 +1,6 @@
-﻿using ReadSqlDataAccess;
+﻿using CAM.Service.Dto;
+using Domain.DataModels;
+using ReadSqlDataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,17 @@ namespace CAM.Service.Repository.DataBaseEngineRepo.ReadRepo
         public async Task DeleteDataBaseEngine(string name, string dcName)
         {
             await _readRepo.SaveData<dynamic>("spDataBaseEngine_Delete", new { dcName = dcName, name = name });
+        }
+
+        public async Task<IEnumerable<DatabaseEngine>> SearchDataBaseEngine(SearchDCDto searchDCDto)
+        {
+            return await _readRepo.LoadData<DatabaseEngine,dynamic>(
+            "spDataBaseEngine_Search",
+            new { 
+                dcName = searchDCDto.DCSourceName,
+                name = searchDCDto.DBEngineName,
+                address = searchDCDto.DBEngineAddress
+            });
         }
     }
 }

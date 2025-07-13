@@ -1,5 +1,6 @@
 ﻿using CAM.Service.Abstractions;
 using CAM.Service.DatabaseEngine_Service.Commands;
+using CAM.Service.DatabaseEngine_Service.Queries;
 using CAM.Service.Dto;
 using CAM.Service.Repository.DataBaseEngineRepo;
 using Domain.DataModels;
@@ -40,7 +41,9 @@ namespace CAM.Service.DatabaseEngine_Service
 
         public Task<List<DatabaseEngine>> Search(SearchDbEngineDto searchDto)
         {
-            return _unitOfWork.DataBaseEngineRepo.SearchDataBaseEngine(searchDto);
+            //return _unitOfWork.DataBaseEngineRepo.SearchDataBaseEngine(searchDto);
+
+            return _mediator.Send(new SearchDataBaseEngineQuery(searchDto));
         }
     }
 }

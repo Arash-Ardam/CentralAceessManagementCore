@@ -72,6 +72,7 @@
     <Build Include="Stored Procedures\DataCenter Stored Procedures\spDataCenter_GetWithDataBaseEngines.sql" />
     <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDataBaseEngine_Add.sql" />
     <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDatabaseEngine_Delete.sql" />
+    <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDataBaseEngine_Search.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CentralAccessManagementCore.Read.publish.xml" />
