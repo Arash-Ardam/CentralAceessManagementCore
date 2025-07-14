@@ -16,15 +16,12 @@ namespace CAM.Service.DatabaseEngine_Service
 {
     internal class DatabaseEngineService : IDatabaseEngineService
     {
-        private readonly IRepoUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
 
-        public DatabaseEngineService(IRepoUnitOfWork unitOfWork,IMediator mediator)
+        public DatabaseEngineService(IMediator mediator)
         {
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
         }
-
 
         public async Task AddDatabaseEngine(string dcName, string dbEngineName, string address)
         {
@@ -34,13 +31,10 @@ namespace CAM.Service.DatabaseEngine_Service
         public async Task Remove(string dcName, string engineName)
         {
             await _mediator.Send(new DeleteDataBaseEngineCommand(dcName, engineName));
-
         }
 
         public Task<List<DatabaseEngine>> Search(SearchDbEngineDto searchDto)
         {
-            //return _unitOfWork.DataBaseEngineRepo.SearchDataBaseEngine(searchDto);
-
             return _mediator.Send(new SearchDataBaseEngineQuery(searchDto));
         }
     }

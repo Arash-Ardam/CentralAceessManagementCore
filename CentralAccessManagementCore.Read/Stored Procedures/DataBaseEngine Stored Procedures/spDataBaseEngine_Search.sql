@@ -4,15 +4,12 @@
 	@address nvarchar(50)
 AS
 BEGIN
-	IF (@name = '' and @address = '')
-		select DataBaseEngine.Name,Address from dbo.DataBaseEngine
-		where 
-		DatabaseEngine.DataCenterId = (select id from dbo.DataCenter where Name = @dcName) ;
-	
-	ELSE
-		select DataBaseEngine.Name,Address from dbo.DataBaseEngine
-		where 
-		DatabaseEngine.DataCenterId = (select id from dbo.DataCenter where Name = @dcName) 
-		and
-		(DataBaseEngine.Name = @name or DataBaseEngine.Address = @address);
+	SELECT Name, Address 
+	FROM dbo.DataBaseEngine
+	WHERE 
+	DataCenterId = (SELECT Id FROM dbo.DataCenter WHERE Name = @dcName)
+	AND 
+	(@name = '' OR Name = @name)
+	AND 
+	(@address = '' OR Address = @address);
 END
