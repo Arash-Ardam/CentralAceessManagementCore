@@ -1,8 +1,10 @@
 ﻿using CAM.Service.Abstractions;
+using CAM.Service.Access_Service.Command;
 using CAM.Service.Dto;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
 using Domain.Enums;
+using MediatR;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,21 +19,24 @@ namespace CAM.Service.Access_Service
     {
         private readonly AccessValidator _validator;
         private readonly IRepoUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
 
-        public AccessService(AccessValidator validator, IRepoUnitOfWork unitOfWork)
+        public AccessService(AccessValidator validator, IRepoUnitOfWork unitOfWork,IMediator mediator)
         {
             _validator = validator;
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
         public async Task<Access> CreateAcceess(AccessBaseDto dto)
         {
-            var validatedEntries = await _validator.GetValidatedEntries(dto);
-            bool isAccessExist = _unitOfWork.AccessRepository.AnyAccessExist(validatedEntries.Source, validatedEntries.ValidatedAccess, dto.Port);
+            bool isAccessExist = await _validator.isValidated(dto);
 
-            if (isAccessExist)
+            if (!isAccessExist)
                 throw new Exception("Alredy Exist");
 
-           return  await _unitOfWork.AccessRepository.CreateAccess(validatedEntries.Source, validatedEntries.ValidatedAccess);
+
+
+            return await _mediator.Send(new CreateAccessCommand(dto));
         }
 
         public Task<Access> GetAccess(short id)

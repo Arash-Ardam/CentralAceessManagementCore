@@ -3,7 +3,8 @@ using CAM.Service.Access_Service;
 using CAM.Service.DataBase_Service;
 using CAM.Service.DatabaseEngine_Service;
 using CAM.Service.DataCenter_Service;
-using CAM.Service.Repository.AccessRepo;
+using CAM.Service.Repository.AccessRepo.ReadRepo;
+using CAM.Service.Repository.AccessRepo.WriteRepo;
 using CAM.Service.Repository.DataBaseEngineRepo;
 using CAM.Service.Repository.DataBaseEngineRepo.ReadRepo;
 using CAM.Service.Repository.DataBaseEngineRepo.WriteRepo;
@@ -34,6 +35,7 @@ namespace CAM.Service
             //read repos
             services.AddScoped<IReadDataCenterRepository, ReadDataCenterRepository>();
             services.AddScoped<IReadDataBaseEngineRepo, ReadDataBaseEngineRepo>();
+            services.AddScoped<IReadAccessRepository, ReadAccessRepository>();
 
 
 

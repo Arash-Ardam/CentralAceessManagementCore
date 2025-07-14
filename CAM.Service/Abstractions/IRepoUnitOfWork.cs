@@ -1,4 +1,4 @@
-﻿using CAM.Service.Repository.AccessRepo;
+﻿using CAM.Service.Repository.AccessRepo.WriteRepo;
 using CAM.Service.Repository.DataBaseEngineRepo.WriteRepo;
 using CAM.Service.Repository.DataBaseRepo;
 using CAM.Service.Repository.DataCenterRepo.WriteRepo;

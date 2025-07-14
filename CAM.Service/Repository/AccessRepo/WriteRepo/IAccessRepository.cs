@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CAM.Service.Repository.AccessRepo
+namespace CAM.Service.Repository.AccessRepo.WriteRepo
 {
     public interface IAccessRepository
     {

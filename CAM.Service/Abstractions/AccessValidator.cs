@@ -1,7 +1,10 @@
-﻿using CAM.Service.Dto;
+﻿using CAM.Service.Access_Service.Queries;
+using CAM.Service.DatabaseEngine_Service.Queries;
+using CAM.Service.Dto;
 using CAM.Service.Repository.AccessRepo;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
+using MediatR;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,10 +17,32 @@ namespace CAM.Service.Abstractions
     public class AccessValidator
     {
         private readonly IRepoUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
 
-        public AccessValidator(IRepoUnitOfWork unitOfWork)
+        public AccessValidator(IRepoUnitOfWork unitOfWork,IMediator mediator)
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
+        }
+
+        public async Task<bool> isValidated(AccessBaseDto dto)
+        {
+            bool isValidated = true;
+            var queryDto = new AccessQueryDto()
+            {
+                dcName = dto.FromDCName,
+                sourceName = dto.FromName,
+                sourceAddress = dto.FromAddress,
+                destinationName = dto.ToName,
+                destinationAddress = dto.ToAddress,
+                port = dto.Port,
+            };
+
+            var existedAccess = await _mediator.Send(new SearchAccessQuery(queryDto));
+            if (existedAccess.Count() != 0)
+                return !isValidated;
+
+            return isValidated;
         }
 
         public async Task<SearchAccessBaseDto> GetValidatedSearchEntry(AccessBaseDto dto)

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CAM.Service.Repository.AccessRepo
+namespace CAM.Service.Repository.AccessRepo.WriteRepo
 {
     internal class AccessRepository : IAccessRepository
     {
@@ -34,7 +34,7 @@ namespace CAM.Service.Repository.AccessRepo
 
         public Access? GetAccess(short id)
         {
-            return _dbContext.Access.FirstOrDefault(ac => ac.Id == id );
+            return _dbContext.Access.FirstOrDefault(ac => ac.Id == id);
         }
 
         public List<Access> GetRangeAccessByDbEngine(string jsonDbEngine)
@@ -102,7 +102,7 @@ namespace CAM.Service.Repository.AccessRepo
                 }
             }
 
-            if(searchAccessDto.HasPort())
+            if (searchAccessDto.HasPort())
                 predicate.And(ac => ac.Port == searchAccessDto.Port);
 
             if (searchAccessDto.HasDirection())

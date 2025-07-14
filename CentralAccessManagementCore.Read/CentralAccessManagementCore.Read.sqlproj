@@ -9,8 +9,7 @@
     <ProjectGuid>{f2ebedf3-dc9f-42a3-8ba9-4be8fecf4a43}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
-    <RootPath>
-    </RootPath>
+    <RootPath />
     <RootNamespace>CentralAccessManagementCore.Read</RootNamespace>
     <AssemblyName>CentralAccessManagementCore.Read</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
@@ -48,7 +47,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
     <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
     <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
   </PropertyGroup>
@@ -61,6 +59,7 @@
     <Folder Include="Stored Procedures" />
     <Folder Include="Stored Procedures\DataCenter Stored Procedures" />
     <Folder Include="Stored Procedures\DataBaseEngine Stored Procedures" />
+    <Folder Include="Stored Procedures\Access Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\DataCenter.sql" />
@@ -73,6 +72,9 @@
     <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDataBaseEngine_Add.sql" />
     <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDatabaseEngine_Delete.sql" />
     <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDataBaseEngine_Search.sql" />
+    <Build Include="dbo\Tables\Access.sql" />
+    <Build Include="Stored Procedures\Access Stored Procedures\spAccess_Search.sql" />
+    <Build Include="Stored Procedures\Access Stored Procedures\spAccess_Add.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CentralAccessManagementCore.Read.publish.xml" />
