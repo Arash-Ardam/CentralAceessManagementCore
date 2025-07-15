@@ -13,6 +13,8 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
     {
         Task<List<Access>> SearchAccesses(SearchAccessQuery dto);
 
-        Task CreateAccess(AccessBaseDto accessDto ,DataCenter targetDC,Access validAccess);
+        Task CreateAccess(AccessBaseDto accessDto);
+
+        Task DeleteAccess(string source, string destination);
     }
 }

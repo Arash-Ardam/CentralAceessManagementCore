@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace CAM.Service.Access_Service.Handlers.Sync
 {
-    public class CreatedAccessEventHandler : INotificationHandler<CreatedAccessEvent>
+    public class DeletedAccessEventHandler : INotificationHandler<DeletedAccessEvent>
     {
         private readonly IReadAccessRepository _readRepo;
 
-        public CreatedAccessEventHandler(IReadAccessRepository readRepo)
+        public DeletedAccessEventHandler(IReadAccessRepository readRepo)
         {
-            _readRepo = readRepo;
+            _readRepo = readRepo;    
         }
 
-        public async Task Handle(CreatedAccessEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(DeletedAccessEvent notification, CancellationToken cancellationToken)
         {
-            await _readRepo.CreateAccess(notification.accessDto);
+            await _readRepo.DeleteAccess(notification.source, notification.destination);
         }
     }
 }

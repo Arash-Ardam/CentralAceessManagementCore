@@ -25,9 +25,30 @@ namespace CAM.Service.Abstractions
             _mediator = mediator;
         }
 
-        public async Task<bool> isValidated(AccessBaseDto dto)
+        public async Task ValidateEntries(AccessBaseDto dto)
         {
-            bool isValidated = true;
+            await ValidateAccessParams(dto);
+            (dto.FromName ,dto.FromAddress) = await ValidateDbEngines(dto.FromDCName,dto.FromName,dto.FromAddress,"Source");
+            (dto.ToName, dto.ToAddress) = await ValidateDbEngines(dto.ToDCName, dto.ToName, dto.ToAddress, "Destination");
+        }
+
+        private async Task<(string name,string address)> ValidateDbEngines(string dcName,string dbEngineName,string address,string side)
+        {
+            SearchDbEngineDto searchDto = new SearchDbEngineDto();
+
+            searchDto.dcName = dcName;
+            searchDto.dbEngineName = dbEngineName;
+            searchDto.Address =  address;
+            var exsistedDbEngines = await _mediator.Send(new SearchDataBaseEngineQuery(searchDto));
+
+            if (exsistedDbEngines.Count() == 0)
+                throw new Exception($"No {side} DbEngine with name: {dbEngineName} Or address : {address} found");
+
+            return (exsistedDbEngines.First().Name, exsistedDbEngines.First().Address);
+        }
+
+        private async Task ValidateAccessParams(AccessBaseDto dto) 
+        {
             var queryDto = new AccessQueryDto()
             {
                 dcName = dto.FromDCName,
@@ -40,9 +61,8 @@ namespace CAM.Service.Abstractions
 
             var existedAccess = await _mediator.Send(new SearchAccessQuery(queryDto));
             if (existedAccess.Count() != 0)
-                return !isValidated;
+                throw new Exception("Access params are not correct");
 
-            return isValidated;
         }
 
         public async Task<SearchAccessBaseDto> GetValidatedSearchEntry(AccessBaseDto dto)

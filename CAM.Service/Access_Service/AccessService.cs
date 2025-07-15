@@ -29,13 +29,7 @@ namespace CAM.Service.Access_Service
         }
         public async Task<Access> CreateAcceess(AccessBaseDto dto)
         {
-            bool isAccessExist = await _validator.isValidated(dto);
-
-            if (!isAccessExist)
-                throw new Exception("Alredy Exist");
-
-
-
+            await _validator.ValidateEntries(dto);
             return await _mediator.Send(new CreateAccessCommand(dto));
         }
 
@@ -57,7 +51,7 @@ namespace CAM.Service.Access_Service
 
         public async Task RemoveAccess(Access entry)
         {
-            await _unitOfWork.AccessRepository.RemoveAccess(entry);
+            await _mediator.Send(new DeleteAccessCommand(entry));
         }
 
         public async Task RemoveAccessInRange(List<Access> accessList)

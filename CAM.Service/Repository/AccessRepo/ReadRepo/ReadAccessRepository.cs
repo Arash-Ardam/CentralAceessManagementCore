@@ -1,6 +1,7 @@
 ﻿using CAM.Service.Access_Service.Queries;
 using CAM.Service.Dto;
 using Domain.DataModels;
+using Newtonsoft.Json;
 using ReadDbContext;
 using System;
 using System.Collections.Generic;
@@ -19,26 +20,37 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
             _readDbContext = readDataAccess;
         }
 
-        public async Task CreateAccess(AccessBaseDto accessDto,DataCenter targetDC, Access validAccess)
+        public async Task CreateAccess(AccessBaseDto accessDto)
         {
             await _readDbContext.SaveData(
                 storedProcedure: "spAccess_Add",
                 parameters: new
                 {
-                    dcName = targetDC.Name,
+                    dcName = accessDto.FromDCName,
 
-                    source = validAccess.Source,
+                    source = JsonConvert.SerializeObject(DatabaseEngine.CreateByNameAndAddress(accessDto.FromName,accessDto.FromAddress)),
                     sourceName = accessDto.FromName,
                     sourceAddress = accessDto.FromAddress,
 
-                    destination = validAccess.Destination,
+                    destination = JsonConvert.SerializeObject(DatabaseEngine.CreateByNameAndAddress(accessDto.ToName, accessDto.ToAddress)),
                     destinationName = accessDto.ToName,
                     destinationAddress = accessDto.ToAddress,
 
-                    port = validAccess.Port,
-                    direction = validAccess.Direction
+                    port = accessDto.Port,
+                    direction = accessDto.Direction
                 });
                 
+        }
+
+        public async Task DeleteAccess(string source, string destination)
+        {
+            await _readDbContext.SaveData(
+                           storedProcedure: "spAccess_Delete",
+                           parameters: new
+                           {
+                               source = source,
+                               destination = destination
+                           });
         }
 
         public async Task<List<Access>> SearchAccesses(SearchAccessQuery dto)

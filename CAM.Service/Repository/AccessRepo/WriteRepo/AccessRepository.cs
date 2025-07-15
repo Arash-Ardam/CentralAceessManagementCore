@@ -1,4 +1,5 @@
-﻿using CAM.Service.Dto;
+﻿using Azure.Core;
+using CAM.Service.Dto;
 using Domain.DataModels;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
@@ -19,17 +20,22 @@ namespace CAM.Service.Repository.AccessRepo.WriteRepo
         {
             _dbContext = dbContext;
         }
-        public async Task<Access> CreateAccess(DataCenter dataCenter, Access access)
+        public async Task<Access> CreateAccess(AccessBaseDto dto)
         {
-            if (access.Source == string.Empty || access.Destination == string.Empty)
-                throw new Exception("Access params are not correct");
+            Access entryAccess = new Access.Create()
+                .AddSource(DatabaseEngine.CreateByNameAndAddress(dto.FromName, dto.FromAddress))
+                .AddDestination(DatabaseEngine.CreateByNameAndAddress(dto.ToName, dto.ToAddress))
+                .AddPort(dto.Port)
+                .SetDirection(dto.Direction)
+                .Build();
 
-            dataCenter.AddAccess(access);
-            _dbContext.Entry(dataCenter).Collection(x => x.Accesses).IsModified = true;
+            DataCenter existedDataCenter = _dbContext.DataCenters.First(x => x.Name == dto.FromDCName) ?? DataCenter.Empty;
+            existedDataCenter.AddAccess(entryAccess);
 
+            _dbContext.Entry(existedDataCenter).Collection(x => x.Accesses).IsModified = true;
 
             await _dbContext.SaveChangesAsync();
-            return access;
+            return entryAccess;
         }
 
         public Access? GetAccess(short id)

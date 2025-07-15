@@ -24,21 +24,10 @@ namespace CAM.Service.Access_Service.Handlers.Write
 
         public async Task<Access> Handle(CreateAccessCommand request, CancellationToken cancellationToken)
         {
-
-            DataCenter targetDC = DataCenter.CreateByName(request.accessDto.FromDCName);
-
-            Access entryAccess = new Access.Create()
-                .AddSource(DatabaseEngine.CreateByNameAndAddress(request.accessDto.FromName, request.accessDto.FromAddress))
-                .AddDestination(DatabaseEngine.CreateByNameAndAddress(request.accessDto.ToName, request.accessDto.ToAddress))
-                .AddPort(request.accessDto.Port)
-                .SetDirection(request.accessDto.Direction)
-                .Build();
-
-
-            var result = await _writeRepo.CreateAccess(targetDC, entryAccess);
+            var result = await _writeRepo.CreateAccess(request.accessDto);
 
             if (result != Access.Empty)
-                await _mediator.Publish(new CreatedAccessEvent(request.accessDto, targetDC, entryAccess));
+                await _mediator.Publish(new CreatedAccessEvent(request.accessDto));
 
             return result;
 

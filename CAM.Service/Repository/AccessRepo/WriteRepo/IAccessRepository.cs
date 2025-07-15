@@ -10,7 +10,7 @@ namespace CAM.Service.Repository.AccessRepo.WriteRepo
 {
     public interface IAccessRepository
     {
-        Task<Access> CreateAccess(DataCenter dataCenter, Access access);
+        Task<Access> CreateAccess(AccessBaseDto dto);
         Task RemoveAccess(Access access);
         Task RemoveRangeOfAccesses(List<Access> accessList);
         Access? GetAccess(short id);
