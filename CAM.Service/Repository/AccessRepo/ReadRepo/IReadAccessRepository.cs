@@ -11,7 +11,7 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
 {
     public interface IReadAccessRepository
     {
-        Task<List<Access>> SearchAccesses(SearchAccessQuery dto);
+        Task<List<Access>> SearchAccesses(AccessBaseDto dto);
 
         Task CreateAccess(AccessBaseDto accessDto);
 

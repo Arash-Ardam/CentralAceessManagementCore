@@ -64,9 +64,6 @@ namespace CAM.Api.Controllers
         {
             AccessBaseDto mappedDto = _mapper.Map<AccessBaseDto>(searchDto);
 
-            if (searchDto.DestinationDCName == string.Empty)
-                mappedDto.ToDCName = mappedDto.FromDCName;
-
             List<Access> searchedAccesses = await _service.SearchAccess(mappedDto);
 
             var result = searchedAccesses.Select(x => _mapper.Map<SearchAccessResultDto>(x)).ToList();

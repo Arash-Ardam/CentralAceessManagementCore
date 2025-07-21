@@ -29,7 +29,7 @@ namespace CAM.Service.Access_Service.Handlers.Write
             if (result != Access.Empty)
                 await _mediator.Publish(new CreatedAccessEvent(request.accessDto));
 
-            return result;
+            return Access.Empty;
 
         }
     }

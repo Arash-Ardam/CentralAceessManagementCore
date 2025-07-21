@@ -21,7 +21,7 @@ namespace CAM.Service.Access_Service.Handlers.Read
 
         public async Task<List<Access>> Handle(SearchAccessQuery request, CancellationToken cancellationToken)
         {
-            return await _readRepo.SearchAccesses(request);
+            return await _readRepo.SearchAccesses(request.dto);
         }
     }
 }

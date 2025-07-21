@@ -1,5 +1,6 @@
 ﻿using CAM.Service.Abstractions;
 using CAM.Service.Access_Service.Command;
+using CAM.Service.Access_Service.Queries;
 using CAM.Service.Dto;
 using CAM.Service.Repository.DataCenterRepo;
 using Domain.DataModels;
@@ -61,9 +62,11 @@ namespace CAM.Service.Access_Service
 
         public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
         {
-            var searchAccessDto =  await _validator.GetValidatedSearchEntry(dto);
+            return await _mediator.Send(new SearchAccessQuery(dto));
 
-            return _unitOfWork.AccessRepository.SearchAccess(searchAccessDto);
+            //var searchAccessDto =  await _validator.GetValidatedSearchEntry(dto);
+
+            //return _unitOfWork.AccessRepository.SearchAccess(searchAccessDto);
         }
 
 

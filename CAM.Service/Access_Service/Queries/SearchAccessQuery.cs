@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CAM.Service.Access_Service.Queries
 {
-    public record SearchAccessQuery(AccessQueryDto dto) : IRequest<List<Access>>
+    public record SearchAccessQuery(AccessBaseDto dto) : IRequest<List<Access>>
     {
     }
 }

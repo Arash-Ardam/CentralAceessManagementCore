@@ -1,10 +1,12 @@
 ﻿using CAM.Service.Access_Service.Queries;
 using CAM.Service.Dto;
+using Dapper;
 using Domain.DataModels;
 using Newtonsoft.Json;
 using ReadDbContext;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,25 +24,35 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
 
         public async Task CreateAccess(AccessBaseDto accessDto)
         {
+            var parameters = new DynamicParameters();
+            parameters.Add("@dcName", accessDto.FromDCName);
+
+            parameters.Add("@source",
+                           JsonConvert.SerializeObject(DatabaseEngine.CreateByNameAndAddress(accessDto.FromName, accessDto.FromAddress)),
+                           DbType.String,
+                           size: -1); 
+            parameters.Add("@sourceName", accessDto.FromName);
+            parameters.Add("@sourceAddress", accessDto.FromAddress);
+
+            parameters.Add("@destination",
+                           JsonConvert.SerializeObject(DatabaseEngine.CreateByNameAndAddress(accessDto.ToName, accessDto.ToAddress)),
+                           DbType.String,
+                           size: -1);
+            parameters.Add("@destinationName", accessDto.ToName);
+            parameters.Add("@destinationAddress", accessDto.ToAddress);
+
+            parameters.Add("@sourceDCName", accessDto.FromDCName);
+            parameters.Add("@destinationDCName", accessDto.ToDCName);
+
+            parameters.Add("@port", accessDto.Port);
+            parameters.Add("@direction", accessDto.Direction);
+
+
             await _readDbContext.SaveData(
                 storedProcedure: "spAccess_Add",
-                parameters: new
-                {
-                    dcName = accessDto.FromDCName,
-
-                    source = JsonConvert.SerializeObject(DatabaseEngine.CreateByNameAndAddress(accessDto.FromName,accessDto.FromAddress)),
-                    sourceName = accessDto.FromName,
-                    sourceAddress = accessDto.FromAddress,
-
-                    destination = JsonConvert.SerializeObject(DatabaseEngine.CreateByNameAndAddress(accessDto.ToName, accessDto.ToAddress)),
-                    destinationName = accessDto.ToName,
-                    destinationAddress = accessDto.ToAddress,
-
-                    port = accessDto.Port,
-                    direction = accessDto.Direction
-                });
-                
+                parameters: parameters);
         }
+
 
         public async Task DeleteAccess(string source, string destination)
         {
@@ -53,22 +65,25 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
                            });
         }
 
-        public async Task<List<Access>> SearchAccesses(SearchAccessQuery dto)
+        public async Task<List<Access>> SearchAccesses(AccessBaseDto dto)
         {
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@sourceDCName", dto.FromDCName);
+            parameters.Add("@sourceName", dto.FromName);
+            parameters.Add("@sourceAddress", dto.FromAddress);
+
+            parameters.Add("@destinationDCName", dto.ToDCName);
+            parameters.Add("@destinationName", dto.ToName);
+            parameters.Add("@destinationAddress", dto.ToAddress);
+
+
+            parameters.Add("@port", dto.Port);
+            parameters.Add("@direction", dto.Direction);
+
             var result = await _readDbContext.LoadData<Access, dynamic>(
                 storedProcedure: "spAccess_Search",
-                parameters: new 
-                {
-                    dcName = dto.dto.dcName,
-
-                    sourceName = dto.dto.sourceName,
-                    sourceAddress = dto.dto.sourceAddress,
-
-                    destinationName = dto.dto.destinationName,
-                    destinationAddress = dto.dto.destinationAddress,
-
-                    port = dto.dto.port
-                });
+                parameters: parameters);
 
             return result.ToList();
         }

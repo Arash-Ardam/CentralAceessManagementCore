@@ -28,11 +28,25 @@ namespace CAM.Service.Abstractions
         public async Task ValidateEntries(AccessBaseDto dto)
         {
             await ValidateAccessParams(dto);
-            (dto.FromName ,dto.FromAddress) = await ValidateDbEngines(dto.FromDCName,dto.FromName,dto.FromAddress,"Source");
-            (dto.ToName, dto.ToAddress) = await ValidateDbEngines(dto.ToDCName, dto.ToName, dto.ToAddress, "Destination");
+
+            (dto.FromDCName,dto.FromName ,dto.FromAddress) = await ValidateDbEngines(
+                dto.FromDCName,
+                dto.FromName,
+                dto.FromAddress,
+                "Source");
+
+            (dto.ToDCName,dto.ToName, dto.ToAddress) = await ValidateDbEngines(
+                dto.ToDCName,
+                dto.ToName,
+                dto.ToAddress,
+                "Destination");
         }
 
-        private async Task<(string name,string address)> ValidateDbEngines(string dcName,string dbEngineName,string address,string side)
+        private async Task<(string dcName,string name,string address)> ValidateDbEngines(
+            string dcName,
+            string dbEngineName,
+            string address,
+            string side)
         {
             SearchDbEngineDto searchDto = new SearchDbEngineDto();
 
@@ -44,22 +58,12 @@ namespace CAM.Service.Abstractions
             if (exsistedDbEngines.Count() == 0)
                 throw new Exception($"No {side} DbEngine with name: {dbEngineName} Or address : {address} found");
 
-            return (exsistedDbEngines.First().Name, exsistedDbEngines.First().Address);
+            return (searchDto.dcName,exsistedDbEngines.First().Name, exsistedDbEngines.First().Address);
         }
 
         private async Task ValidateAccessParams(AccessBaseDto dto) 
         {
-            var queryDto = new AccessQueryDto()
-            {
-                dcName = dto.FromDCName,
-                sourceName = dto.FromName,
-                sourceAddress = dto.FromAddress,
-                destinationName = dto.ToName,
-                destinationAddress = dto.ToAddress,
-                port = dto.Port,
-            };
-
-            var existedAccess = await _mediator.Send(new SearchAccessQuery(queryDto));
+            var existedAccess = await _mediator.Send(new SearchAccessQuery(dto));
             if (existedAccess.Count() != 0)
                 throw new Exception("Access params are not correct");
 
