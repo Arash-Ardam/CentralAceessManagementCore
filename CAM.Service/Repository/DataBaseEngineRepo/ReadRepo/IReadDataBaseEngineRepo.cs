@@ -13,6 +13,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo.ReadRepo
         Task AddDataBaseEngine(string name,string address,string dcName);
         Task DeleteDataBaseEngine(string name,string dcName);
 
+        Task<DatabaseEngine> GetDatabaseEngine(string dcName,string name);
         Task<IEnumerable<DatabaseEngine>> SearchDataBaseEngine(SearchDCDto searchDCDto);
     }
 }

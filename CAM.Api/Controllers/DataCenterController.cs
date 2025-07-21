@@ -28,19 +28,6 @@ namespace CAM.Api.Controllers
             }
         }
 
-        [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateName( string oldName,string newName)
-        {
-            if (!string.IsNullOrWhiteSpace(oldName) && !string.IsNullOrWhiteSpace(newName))
-            {
-                await _dcService.EditDataCenterName(oldName, newName);
-                return Accepted();
-            }
-            else 
-            {
-                return BadRequest(Messages.StringNullOrWhiteSpace);
-            }
-        }
 
 
         [HttpGet("[action]/{name}")]

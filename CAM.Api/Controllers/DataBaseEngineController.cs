@@ -68,10 +68,8 @@ namespace CAM.Api.Controllers
             if (entry.Count == 0)
                 return NotFound($"DbEngine with name: {engineName} not found");
 
-            List<Access> relatedAccesses = _accessService.GetAccessesByDbEngine(entry[0]);
 
             await _dbEngineService.Remove(dcName, engineName);
-            await _accessService.RemoveAccessInRange(relatedAccesses);
             return Accepted();
 
         }

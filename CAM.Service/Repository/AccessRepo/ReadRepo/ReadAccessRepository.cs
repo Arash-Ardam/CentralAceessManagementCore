@@ -66,6 +66,17 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
                            });
         }
 
+        public async Task DeleteByRelatedDbEngine(string dcName, string dbEngineName)
+        {
+            await _readDbContext.SaveData(
+                           storedProcedure: "spAccess_DeleteByRelatedDbEngine",
+                           parameters: new
+                           {
+                               dcName = dcName,
+                               name = dbEngineName
+                           });
+        }
+
         public async Task<Access> GetAccess(short id)
         {
             var parameters = new DynamicParameters();

@@ -77,6 +77,8 @@
     <Build Include="Stored Procedures\Access Stored Procedures\spAccess_Add.sql" />
     <Build Include="Stored Procedures\Access Stored Procedures\spAccess_Delete.sql" />
     <Build Include="Stored Procedures\Access Stored Procedures\spAccess_Get.sql" />
+    <Build Include="Stored Procedures\Access Stored Procedures\spAccess_DeleteByRelatedDbEngine.sql" />
+    <Build Include="Stored Procedures\DataBaseEngine Stored Procedures\spDataBaseEngine_Get.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CentralAccessManagementCore.Read.publish.xml" />

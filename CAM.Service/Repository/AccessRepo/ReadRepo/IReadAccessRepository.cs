@@ -19,5 +19,7 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
         Task DeleteAccess(string source, string destination, int port);
 
         Task<Access> GetAccess(short id);
+
+        Task DeleteByRelatedDbEngine(string dcName, string dbEngineName);
     }
 }
