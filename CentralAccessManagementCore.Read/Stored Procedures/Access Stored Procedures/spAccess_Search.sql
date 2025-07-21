@@ -9,7 +9,7 @@
 	@direction int
 AS
 BEGIN
-	Select Source,Destination,Port,Direction 
+	Select Id,Source,Destination,Port,Direction 
 	from dbo.Access
 	where
 	(
