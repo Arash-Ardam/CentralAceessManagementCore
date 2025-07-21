@@ -14,9 +14,7 @@ namespace CAM.Service.Access_Service
         Task<List<Access>> SearchAccess(AccessBaseDto dto);
 
         Task<Access> GetAccess(short id);
-        List<Access> GetAccessesByDbEngine(DatabaseEngine databaseEngine);
         Task RemoveAccess(Access entry);   
 
-        Task RemoveAccessInRange(List<Access> accessList);
     }
 }

@@ -19,13 +19,11 @@ namespace CAM.Service.Access_Service
     internal class AccessService : IAccessService
     {
         private readonly AccessValidator _validator;
-        private readonly IRepoUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
 
-        public AccessService(AccessValidator validator, IRepoUnitOfWork unitOfWork,IMediator mediator)
+        public AccessService(AccessValidator validator,IMediator mediator)
         {
             _validator = validator;
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
         }
         public async Task<Access> CreateAcceess(AccessBaseDto dto)
@@ -39,21 +37,12 @@ namespace CAM.Service.Access_Service
             return await _mediator.Send(new GetAccessQuery(id));
         }
 
-        public List<Access> GetAccessesByDbEngine(DatabaseEngine databaseEngine)
-        {
-            string jsonDbEngine = JsonConvert.SerializeObject(databaseEngine);
-            return _unitOfWork.AccessRepository.GetRangeAccessByDbEngine(jsonDbEngine);
-        }
 
         public async Task RemoveAccess(Access entry)
         {
             await _mediator.Send(new DeleteAccessCommand(entry));
         }
 
-        public async Task RemoveAccessInRange(List<Access> accessList)
-        {
-            await _unitOfWork.AccessRepository.RemoveRangeOfAccesses(accessList);
-        }
 
         public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
         {

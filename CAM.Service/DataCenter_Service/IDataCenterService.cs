@@ -11,7 +11,6 @@ namespace CAM.Service.DataCenter_Service
         Task<List<DataCenter>> GetAllDataCenters();
         Task<DataCenter> GetDataCenterWithDatabaseEngines(string name);
 
-        Task EditDataCenterName(string oldName, string newName);
         Task DeleteDataCenter(string name);
     }
 }

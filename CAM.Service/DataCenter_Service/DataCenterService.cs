@@ -16,12 +16,10 @@ namespace CAM.Service.DataCenter_Service
 {
     internal class DataCenterService : IDataCenterService
     {
-        private readonly IRepoUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
 
-        public DataCenterService(IRepoUnitOfWork unitOfWork, IMediator mediator)
+        public DataCenterService(IMediator mediator)
         {
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
         }
 
@@ -35,11 +33,6 @@ namespace CAM.Service.DataCenter_Service
             await _mediator.Send(new DeleteDataCenterByNameCommand(name));
         }
 
-        public async Task EditDataCenterName(string oldName, string newName)
-        {
-            await _unitOfWork.DataCenterRepo.UpdateDataCenter(oldName, newName);
-        }
-
         public async Task<List<DataCenter>> GetAllDataCenters()
         {
             return await _mediator.Send(new GetAllDataCentersQuery());
@@ -51,12 +44,6 @@ namespace CAM.Service.DataCenter_Service
         }
         public async Task<DataCenter> GetDataCenterWithDatabaseEngines(string name)
         {
-            //SearchDCDto searchDCDto = new SearchDCDto.Create()
-            //    .AddSourceDcName(name)
-            //    .Build();
-
-            
-            
             return await _mediator.Send(new GetDataCenterWithDatabaseEnginesQuery(name));
         }
 
