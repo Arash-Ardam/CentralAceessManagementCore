@@ -54,15 +54,30 @@ namespace CAM.Service.Repository.AccessRepo.ReadRepo
         }
 
 
-        public async Task DeleteAccess(string source, string destination)
+        public async Task DeleteAccess(string source, string destination,int port)
         {
             await _readDbContext.SaveData(
                            storedProcedure: "spAccess_Delete",
                            parameters: new
                            {
                                source = source,
-                               destination = destination
+                               destination = destination,
+                               port = port
                            });
+        }
+
+        public async Task<Access> GetAccess(short id)
+        {
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@id", id);
+
+
+            var result = await _readDbContext.LoadData<Access, dynamic>(
+                storedProcedure: "spAccess_Get",
+                parameters: parameters);
+
+            return result.FirstOrDefault() ?? Access.Empty;
         }
 
         public async Task<List<Access>> SearchAccesses(AccessBaseDto dto)

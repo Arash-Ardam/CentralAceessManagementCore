@@ -24,7 +24,7 @@ namespace CAM.Service.Access_Service.Handlers.Write
         {
             await _writeRepo.RemoveAccess(request.access);
 
-            await _mediator.Publish(new DeletedAccessEvent(request.access.Source,request.access.Destination));
+            await _mediator.Publish(new DeletedAccessEvent(request.access.Source,request.access.Destination,request.access.Port));
         }
     }
 }

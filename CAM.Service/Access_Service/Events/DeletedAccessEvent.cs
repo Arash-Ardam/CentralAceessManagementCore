@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CAM.Service.Access_Service.Events
 {
-    public record DeletedAccessEvent(string source,string destination) : INotification
+    public record DeletedAccessEvent(string source,string destination,int port) : INotification
     {
     }
 }

@@ -20,7 +20,7 @@ namespace CAM.Service.Access_Service.Handlers.Sync
 
         public async Task Handle(DeletedAccessEvent notification, CancellationToken cancellationToken)
         {
-            await _readRepo.DeleteAccess(notification.source, notification.destination);
+            await _readRepo.DeleteAccess(notification.source, notification.destination,notification.port);
         }
     }
 }

@@ -34,14 +34,9 @@ namespace CAM.Service.Access_Service
             return await _mediator.Send(new CreateAccessCommand(dto));
         }
 
-        public Task<Access> GetAccess(short id)
+        public async Task<Access> GetAccess(short id)
         {
-            var result = _unitOfWork.AccessRepository.GetAccess(id);
-
-            if (result == default)
-                return Task.FromResult(Access.Empty);
-
-            return Task.FromResult(result);
+            return await _mediator.Send(new GetAccessQuery(id));
         }
 
         public List<Access> GetAccessesByDbEngine(DatabaseEngine databaseEngine)
@@ -63,10 +58,6 @@ namespace CAM.Service.Access_Service
         public async Task<List<Access>> SearchAccess(AccessBaseDto dto)
         {
             return await _mediator.Send(new SearchAccessQuery(dto));
-
-            //var searchAccessDto =  await _validator.GetValidatedSearchEntry(dto);
-
-            //return _unitOfWork.AccessRepository.SearchAccess(searchAccessDto);
         }
 
 

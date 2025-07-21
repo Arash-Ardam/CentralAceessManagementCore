@@ -59,7 +59,11 @@ namespace CAM.Service.Repository.AccessRepo.WriteRepo
 
         public async Task RemoveAccess(Access entry)
         {
-            _dbContext.Access.Remove(entry);
+            Access toDeleteEntry = _dbContext.Access.FirstOrDefault(ac => ac.Source == entry.Source
+            && ac.Destination == entry.Destination
+            && ac.Port == entry.Port) ?? Access.Empty;
+
+            _dbContext.Access.Remove(toDeleteEntry);
 
             await _dbContext.SaveChangesAsync();
         }

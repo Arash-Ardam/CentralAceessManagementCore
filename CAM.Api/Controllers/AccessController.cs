@@ -82,10 +82,10 @@ namespace CAM.Api.Controllers
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> Delete(short id)
         {
-            Access entry = await _service.GetAccess(id) ?? Access.Empty;
+            Access entry = await _service.GetAccess(id);
             if (entry == Access.Empty)
             {
-                return NotFound($"Access with id : {id} not found");
+                return NotFound($"Access with params :( source: {entry.Source} , destination: {entry.Destination} , port: {entry.Port} ) not found");
             }
 
             await _service.RemoveAccess(entry);
