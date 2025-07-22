@@ -3,6 +3,7 @@ using CAM.Service.Dto;
 using CAM.Service.Repository.DataBaseEngineRepo.WriteRepo;
 using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Domain.DataModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,15 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
     internal class DataBaseEngineRepo : IDataBaseEngineRepo
     {
         private readonly ApplicationDbContext.ApplicationDbContext _dbContext;
-        private readonly IDataCenterSqlDataRepository _dataCenterRepo;
 
-        public DataBaseEngineRepo(ApplicationDbContext.ApplicationDbContext dbContext, IDataCenterSqlDataRepository dataCenterRepo)
+        public DataBaseEngineRepo(ApplicationDbContext.ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _dataCenterRepo = dataCenterRepo;
         }
 
         public async Task AddDataBaseEngine(string dcName, string dbEngineName, string address)
         {
-            var dataCenter = await CheckDuplicatedDbEngines(dcName, dbEngineName, address);
+            DataCenter dataCenter = _dbContext.DataCenters.FirstOrDefault(x => x.Name == dcName);
 
             dataCenter.AddDatabaseEngine(DatabaseEngine.CreateByNameAndAddress(dbEngineName, address));
 
@@ -33,6 +32,7 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
                       .IsModified = true;
 
             await SaveChangesAsync();
+
         }
 
         public Task<DatabaseEngine> GetDataBaseEngine(string name)
@@ -40,84 +40,49 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
             throw new NotImplementedException();
         }
 
-        public async Task<List<DatabaseEngine>> SearchDataBaseEngine(SearchDbEngineDto searchDto)
-        {
-            SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddSourceDcName(searchDto.dcName)
-                .AddDbEngineName(searchDto.dbEngineName)
-                .AddDbEngineAddress(searchDto.Address)
-                .Build();
-
-            DataCenter? dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
-
-            if (dataCenter == DataCenter.Empty)
-                return new List<DatabaseEngine>();
-
-            if (searchDto.withDatabases)
-            {
-                foreach (DatabaseEngine engine in dataCenter.DatabaseEngines)
-                {
-                    _dbContext.Entry(engine)
-                        .Collection(e => e.Databases)
-                        .Query()
-                        .ToList();
-                }
-            }
-
-            return dataCenter.DatabaseEngines;
-        }
 
         public async Task RemoveDataBaseEngine(string dcName, string dbEngineName)
         {
-            SearchDCDto searchDCDto = new SearchDCDto.Create()
-                .AddSourceDcName(dcName)
-                .AddDbEngineName(dbEngineName)
-                .Build();
+            DataCenter dataCenter = _dbContext.DataCenters.FirstOrDefault(x => x.Name == dcName)
+                ?? DataCenter.Empty;
 
-            DataCenter dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(searchDCDto);
+            DatabaseEngine databaseEngine = _dbContext.Entry(dataCenter)
+                .Collection(dc => dc.DatabaseEngines)
+                .Query()
+                .FirstOrDefault(dbE => dbE.Name == dbEngineName) ?? DatabaseEngine.Empty;
 
-            if (dataCenter == default)
-            {
-                throw new Exception();
-            }
+            DeleteRelatedAccesses(dataCenter, databaseEngine);
 
-            else if (dataCenter.DatabaseEngines.Count == 0)
-            {
-                throw new Exception();
-            }
+            DeleteDbEngine(dataCenter, databaseEngine);
 
-            dataCenter.DatabaseEngines.Remove(dataCenter.DatabaseEngines[0]);
+
+            await SaveChangesAsync();
+        }
+
+        private void DeleteRelatedAccesses(DataCenter dataCenter, DatabaseEngine databaseEngine)
+        {
+            var relatedAccesses = _dbContext.Entry(dataCenter)
+                .Collection(dc => dc.Accesses)
+                .Query()
+                .Where(
+                    x => x.Source == JsonConvert.SerializeObject(databaseEngine)
+                    ||
+                    x.Destination == JsonConvert.SerializeObject(databaseEngine))
+                .ToList();
+
+            dataCenter.Accesses.Clear();
+
+            _dbContext.Entry(dataCenter).Collection(dc => dc.Accesses).IsModified = true;
+        }
+
+        private void DeleteDbEngine(DataCenter dataCenter, DatabaseEngine dbEngineName)
+        {
+            dataCenter.DatabaseEngines.Remove(dbEngineName);
 
             _dbContext.Entry(dataCenter).Collection(dc => dc.DatabaseEngines).IsModified = true;
-
-            await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<DataCenter> CheckDuplicatedDbEngines(string dcName, string dbEngineName, string address)
-        {
-            SearchDCDto dCDto = new SearchDCDto.Create()
-                .AddSourceDcName(dcName)
-                .AddDbEngineName(dbEngineName)
-                .AddDbEngineAddress(address)
-                .Build();
-
-            DataCenter dataCenter = await _dataCenterRepo.SearchDataCenter<BasePredicateBuilder>(dCDto);
-
-            if (dataCenter.DatabaseEngines.Count != 0)
-            {
-                bool isDbEngineNameDuplicated = dataCenter.DatabaseEngines[0].Name == dbEngineName;
-                bool isAddressDuplicated = dataCenter.DatabaseEngines[0].Address == address;
-
-                if (isDbEngineNameDuplicated)
-                    throw new Exception($"Entity with Param : {dbEngineName} Already Exist");
-                if (isAddressDuplicated)
-                    throw new Exception($"Entity with Param : {address} Already Exist");
-            }
-
-            return dataCenter;
-        }
-
-        public async Task SaveChangesAsync()
+        private async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
         }

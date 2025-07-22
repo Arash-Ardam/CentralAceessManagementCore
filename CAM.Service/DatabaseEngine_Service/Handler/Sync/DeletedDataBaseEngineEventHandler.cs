@@ -16,23 +16,15 @@ namespace CAM.Service.DatabaseEngine_Service.Handler.Sync
     {
         private readonly IReadDataBaseEngineRepo _readDbEngineRepo;
         private readonly IReadAccessRepository _readAccessRepo;
-        private readonly IAccessRepository _writeAccessRepo;
 
-        public DeletedDataBaseEngineEventHandler(IReadDataBaseEngineRepo readDbEngineRepo,IReadAccessRepository readAccessRepo,IAccessRepository writeAcceessRepo)
+        public DeletedDataBaseEngineEventHandler(IReadDataBaseEngineRepo readDbEngineRepo,IReadAccessRepository readAccessRepo)
         {
             _readDbEngineRepo = readDbEngineRepo;
             _readAccessRepo = readAccessRepo;
-            _writeAccessRepo = writeAcceessRepo;
         }
 
         public async Task Handle(DeletedDataBaseEngineEvent notification, CancellationToken cancellationToken)
         {
-            var jsonDbEngine = JsonConvert.SerializeObject(await _readDbEngineRepo.GetDatabaseEngine(notification.dcName, notification.name));
-
-            var relatedAccesses =  _writeAccessRepo.GetRangeAccessByDbEngine(jsonDbEngine);
-
-            await _writeAccessRepo.RemoveRangeOfAccesses(relatedAccesses);
-
             await _readDbEngineRepo.DeleteDataBaseEngine(notification.name, notification.dcName);
 
             await _readAccessRepo.DeleteByRelatedDbEngine(notification.dcName, notification.name);

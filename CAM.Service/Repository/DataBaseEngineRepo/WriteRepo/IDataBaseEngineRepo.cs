@@ -12,7 +12,6 @@ namespace CAM.Service.Repository.DataBaseEngineRepo.WriteRepo
     {
         Task AddDataBaseEngine(string dcName, string dbEngineName, string address);
         Task<DatabaseEngine> GetDataBaseEngine(string name);
-        Task<List<DatabaseEngine>> SearchDataBaseEngine(SearchDbEngineDto searchDto);
         Task RemoveDataBaseEngine(string dcName, string dbEngineName);
     }
 }

@@ -39,7 +39,6 @@ namespace CAM.Service
 
 
 
-            services.AddScoped<AccessValidator>();
 
             //services
             services.AddScoped<IDataCenterService, DataCenterService>();
