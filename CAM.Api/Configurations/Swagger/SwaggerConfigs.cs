@@ -41,7 +41,7 @@ namespace CAM.Api.Configurations.Swagger
                                 Type = ReferenceType.SecurityScheme
                             }
                         },
-                        ["tenant","this is for tenants"]
+                        []
                     }
                 };
 
@@ -79,7 +79,6 @@ namespace CAM.Api.Configurations.Swagger
 
                 c.OAuthClientId(authOptions.ClientId);
                 c.OAuthClientSecret(authOptions.ClientSecret);
-                c.OAuthScopes("tenant");
             });
         }
 
