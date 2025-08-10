@@ -3,13 +3,14 @@ using CAM.Service.DataBase_Service;
 using CAM.Service.Dto;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CAM.Api.Controllers
+namespace CAM.Api.Controllers.Users
 {
+    [Route("api/users/[controller]")]
     public class DataBaseController : ApiControllerBase
     {
         private readonly IDataBaseService _service;
 
-        public DataBaseController(IDataBaseService dataBaseService,ILogger<ApiControllerBase> logger) : base(logger)
+        public DataBaseController(IDataBaseService dataBaseService, ILogger<ApiControllerBase> logger) : base(logger)
         {
             _service = dataBaseService;
         }
@@ -18,7 +19,7 @@ namespace CAM.Api.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Add(AddDataBaseDto dto)
         {
-            Tuple<bool,string> hasNull = CheckNulity(dto);
+            Tuple<bool, string> hasNull = CheckNulity(dto);
 
             if (hasNull.Item1)
                 return BadRequest(string.Format(Messages.StringNullOrWhiteSpace, hasNull.Item2));

@@ -1,10 +1,13 @@
 ﻿using CAM.Api.Dtos;
 using CAM.Service;
 using CAM.Service.DataCenter_Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CAM.Api.Controllers
+namespace CAM.Api.Controllers.Admin
 {
+    [Authorize(Policy = "AdminOnly")]
+    [Route("api/admin/[controller]")]
     public class DataCenterController : ApiControllerBase
     {
         private readonly IDataCenterService _dcService;
@@ -19,12 +22,12 @@ namespace CAM.Api.Controllers
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-               await _dcService.CreateDataCenterByName(name);
+                await _dcService.CreateDataCenterByName(name);
                 return Created();
             }
             else
             {
-                return BadRequest(string.Format(Messages.StringNullOrWhiteSpace,"نام دیتابیس"));    
+                return BadRequest(string.Format(Messages.StringNullOrWhiteSpace, "نام دیتابیس"));
             }
         }
 
@@ -59,9 +62,9 @@ namespace CAM.Api.Controllers
                 await _dcService.DeleteDataCenter(name);
                 return Accepted();
             }
-            else 
+            else
             {
-                return BadRequest(string.Format(Messages.StringNullOrWhiteSpace,"نام"));
+                return BadRequest(string.Format(Messages.StringNullOrWhiteSpace, "نام"));
             }
         }
 

@@ -10,8 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Reflection;
 
-namespace CAM.Api.Controllers
+namespace CAM.Api.Controllers.Users
 {
+    [Route("api/users/[controller]")]
     public class DataBaseEngineController : ApiControllerBase
     {
         private readonly IDatabaseEngineService _dbEngineService;
@@ -64,7 +65,7 @@ namespace CAM.Api.Controllers
             if (string.IsNullOrEmpty(engineName))
                 return BadRequest(string.Format(Messages.StringNullOrWhiteSpace, "DataBaseEngine"));
 
-            var entry = await _dbEngineService.Search(new SearchDbEngineDto() {dcName = dcName , dbEngineName = engineName });
+            var entry = await _dbEngineService.Search(new SearchDbEngineDto() { dcName = dcName, dbEngineName = engineName });
             if (entry.Count == 0)
                 return NotFound($"DbEngine with name: {engineName} not found");
 

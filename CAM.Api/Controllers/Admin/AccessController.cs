@@ -6,14 +6,16 @@ using Domain.DataModels;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CAM.Api.Controllers
+namespace CAM.Api.Controllers.Admin
 {
+
+    [Route("api/admin/[controller]")]
     public class AccessController : ApiControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IAccessService _service;
 
-        public AccessController(ILogger<ApiControllerBase> logger , IMapper mapper , IAccessService accessService) : base(logger)
+        public AccessController(ILogger<ApiControllerBase> logger, IMapper mapper, IAccessService accessService) : base(logger)
         {
             _mapper = mapper;
             _service = accessService;

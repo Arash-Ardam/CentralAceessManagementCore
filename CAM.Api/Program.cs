@@ -1,4 +1,6 @@
 using ApplicationDbContext.EntityConfigs;
+using CAM.Api.Configurations.Auth;
+using CAM.Api.Configurations.Swagger;
 using CAM.Api.Mapper;
 using CAM.Service;
 using ReadDbContext;
@@ -16,7 +18,8 @@ namespace CAM.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.AddAuthConfigs();
+            builder.AddSwaggerConfigs();
             builder.Services.AddCAMDbContext(builder.Configuration);
             builder.Services.AddCAMReadDbContext();
 
@@ -29,14 +32,12 @@ namespace CAM.Api
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerConfigs();
             }
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-
+            app.UseAuthConfigs();
 
             app.MapControllers();
 
