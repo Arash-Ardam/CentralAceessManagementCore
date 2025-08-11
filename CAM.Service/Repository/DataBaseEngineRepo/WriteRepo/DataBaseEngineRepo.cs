@@ -1,8 +1,10 @@
-﻿using CAM.Service.Abstractions;
+﻿using ApplicationDbContext.DbContexts;
+using CAM.Service.Abstractions;
 using CAM.Service.Dto;
 using CAM.Service.Repository.DataBaseEngineRepo.WriteRepo;
 using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Domain.DataModels;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,22 +16,20 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
 {
     internal class DataBaseEngineRepo : IDataBaseEngineRepo
     {
-        private readonly ApplicationDbContext.ApplicationDbContext _dbContext;
+        private readonly WriteTenantDbContext _dbContext;
+        private readonly DbSet<DatabaseEngine> _dbSet;
 
-        public DataBaseEngineRepo(ApplicationDbContext.ApplicationDbContext dbContext)
+        public DataBaseEngineRepo(WriteTenantDbContext dbContext)
         {
             _dbContext = dbContext;
+            _dbSet = _dbContext.Set<DatabaseEngine>();
+            _dbContext.Database.EnsureCreated();
         }
 
         public async Task AddDataBaseEngine(string dcName, string dbEngineName, string address)
         {
-            DataCenter dataCenter = _dbContext.DataCenters.FirstOrDefault(x => x.Name == dcName);
-
-            dataCenter.AddDatabaseEngine(DatabaseEngine.CreateByNameAndAddress(dbEngineName, address));
-
-            _dbContext.Entry(dataCenter)
-                      .Collection(dc => dc.DatabaseEngines)
-                      .IsModified = true;
+            await _dbSet.AddAsync(DatabaseEngine.CreateByNameAndAddress(dbEngineName, address));
+            
 
             await SaveChangesAsync();
 
@@ -43,19 +43,12 @@ namespace CAM.Service.Repository.DataBaseEngineRepo
 
         public async Task RemoveDataBaseEngine(string dcName, string dbEngineName)
         {
-            DataCenter dataCenter = _dbContext.DataCenters.FirstOrDefault(x => x.Name == dcName)
-                ?? DataCenter.Empty;
+            var entity = _dbSet.FirstOrDefault(x => x.Name == dbEngineName) ?? DatabaseEngine.Empty;
 
-            DatabaseEngine databaseEngine = _dbContext.Entry(dataCenter)
-                .Collection(dc => dc.DatabaseEngines)
-                .Query()
-                .FirstOrDefault(dbE => dbE.Name == dbEngineName) ?? DatabaseEngine.Empty;
+            if(entity == DatabaseEngine.Empty)
+                throw new ArgumentNullException($"no dbEngine with name {dbEngineName} exists");
 
-            DeleteRelatedAccesses(dataCenter, databaseEngine);
-
-            DeleteDbEngine(dataCenter, databaseEngine);
-
-
+            _dbSet.Remove(entity);
             await SaveChangesAsync();
         }
 

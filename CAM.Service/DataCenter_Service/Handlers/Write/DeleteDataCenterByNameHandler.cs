@@ -25,7 +25,7 @@ namespace CAM.Service.DataCenter_Service.Handlers.Write
         {
            await _writeRepo.DeleteDataCenter(request.name);
 
-           await _mediator.Publish(new DeletedDataCenterEvent(request.name));
+           //await _mediator.Publish(new DeletedDataCenterEvent(request.name));
         }
     }
 }

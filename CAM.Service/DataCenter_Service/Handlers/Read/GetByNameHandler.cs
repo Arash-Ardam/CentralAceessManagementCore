@@ -1,5 +1,6 @@
 ﻿using CAM.Service.DataCenter_Service.Queries;
 using CAM.Service.Repository.DataCenterRepo.ReadRepo;
+using CAM.Service.Repository.DataCenterRepo.WriteRepo;
 using Domain.DataModels;
 using MediatR;
 
@@ -7,11 +8,11 @@ namespace CAM.Service.DataCenter_Service.Handlers.Read
 {
     public class GetByNameHandler : IRequestHandler<GetDataCenterByNameQuery, DataCenter>
     {
-        public GetByNameHandler(IReadDataCenterRepository dataCenterRepo)
+        public GetByNameHandler(IDataCenterSqlDataRepository dataCenterRepo)
         {
             DataCenterRepo = dataCenterRepo;
         }
-        private IReadDataCenterRepository DataCenterRepo { get; }
+        private IDataCenterSqlDataRepository DataCenterRepo { get; }
 
         public async Task<DataCenter> Handle(GetDataCenterByNameQuery request, CancellationToken cancellationToken)
         {

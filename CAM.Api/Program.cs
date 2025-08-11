@@ -3,6 +3,7 @@ using CAM.Api.Configurations.Auth;
 using CAM.Api.Configurations.Swagger;
 using CAM.Api.Mapper;
 using CAM.Service;
+using ReadAppDbContext.Configs;
 using ReadDbContext;
 
 namespace CAM.Api
@@ -20,8 +21,11 @@ namespace CAM.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.AddAuthConfigs();
             builder.AddSwaggerConfigs();
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddCAMDbContext(builder.Configuration);
             builder.Services.AddCAMReadDbContext();
+            builder.Services.AddWriteDbContexts(builder.Configuration);
+            builder.Services.AddReadDbContexts(builder.Configuration);
 
 
             builder.Services.AddMediatR(cnfg => cnfg.RegisterServicesFromAssembly(typeof(ServicesConfig).Assembly));

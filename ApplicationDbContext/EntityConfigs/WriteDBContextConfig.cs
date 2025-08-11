@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ApplicationDbContext.DbContexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationDbContext.EntityConfigs
 {
-    public static class DBContextConfig
+    public static class WriteDBContextConfig
     {
         public static void AddCAMDbContext(this IServiceCollection services, IConfiguration configuration)
         {
@@ -25,7 +26,7 @@ namespace ApplicationDbContext.EntityConfigs
             {
                 services.AddDbContext<ApplicationDbContext>(x =>
                     x.UseSqlServer(
-                        dbOptions.sqlServer.ConnectionString
+                        dbOptions.sqlServer.AdminConnectionString
                         , sqlServerOptionsAction =>
                         {
                             sqlServerOptionsAction.EnableRetryOnFailure(
@@ -34,6 +35,22 @@ namespace ApplicationDbContext.EntityConfigs
 
                         }), ServiceLifetime.Scoped
                         );
+            }
+        }
+
+        public static void AddWriteDbContexts(this IServiceCollection services, IConfiguration configuration)
+        {
+            var config = configuration.GetRequiredSection("WriteDbContextConfigEntry");
+            var dbOptions = config.Get<WriteDbContextConfigEntry>();
+            if (default == dbOptions)
+            {
+                throw new NullReferenceException(nameof(dbOptions));
+            }
+
+            if (dbOptions.isEnabled && dbOptions.sqlServer.isEnabled)
+            {
+                services.AddDbContext<AdminDbContext>(ServiceLifetime.Scoped);
+                services.AddDbContext<WriteTenantDbContext>(ServiceLifetime.Scoped);
             }
         }
     }
@@ -47,6 +64,7 @@ namespace ApplicationDbContext.EntityConfigs
     {
         public bool isEnabled { get; set; }
         public short retryCount { get; set; }
-        public string ConnectionString { get; set; } = string.Empty;
+        public string AdminConnectionString { get; set; } = string.Empty;
+        public string TenantConnectionString { get; set; } = string.Empty;
     }
 }

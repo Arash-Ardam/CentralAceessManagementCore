@@ -6,29 +6,36 @@ using CAM.Service.DatabaseEngine_Service;
 using CAM.Service.DataCenter_Service;
 using CAM.Service.Dto;
 using Domain.DataModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Reflection;
 
 namespace CAM.Api.Controllers.Users
 {
+    [Authorize]
     [Route("api/users/[controller]")]
     public class DataBaseEngineController : ApiControllerBase
     {
         private readonly IDatabaseEngineService _dbEngineService;
-        private readonly IAccessService _accessService;
-        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IDataCenterService _dataCenterService;
 
         public DataBaseEngineController(
             IDatabaseEngineService engineService,
-            IAccessService accessService,
-            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor,
+            IDataCenterService dataCenterService,
             ILogger<ApiControllerBase> logger) : base(logger)
         {
             _dbEngineService = engineService;
-            _accessService = accessService;
-            _mapper = mapper;
+            _contextAccessor = httpContextAccessor;
+            _dataCenterService = dataCenterService;
+
+            TenantId = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "tenant-id").Value;
         }
+
+        private string TenantId { get; set; }
+
 
 
         [HttpPost("[action]")]
@@ -43,7 +50,11 @@ namespace CAM.Api.Controllers.Users
 
             else
             {
-                await _dbEngineService.AddDatabaseEngine(dto.dcName, dto.dbEngineName, dto.Address);
+                var existedTenant = await _dataCenterService.GetDataCenter(TenantId);
+                if (existedTenant == DataCenter.Empty)
+                    throw new Exception("Tenant not found");
+
+                await _dbEngineService.AddDatabaseEngine(TenantId, dto.dbEngineName, dto.Address);
                 return Created();
             }
 

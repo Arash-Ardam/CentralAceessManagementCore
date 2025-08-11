@@ -26,7 +26,7 @@ namespace CAM.Service.DataCenter_Service.Handlers.Write
         {
             await _writeRepo.AddDataCenter(DataCenter.CreateByName(request.name));
 
-            await _mediator.Publish(new AddedDataCenterEvent(request.name));
+            //await _mediator.Publish(new AddedDataCenterEvent(request.name));
         }
     }
 }

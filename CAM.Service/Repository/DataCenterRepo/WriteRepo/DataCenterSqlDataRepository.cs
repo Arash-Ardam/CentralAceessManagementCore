@@ -1,4 +1,6 @@
 ﻿using ApplicationDbContext;
+using ApplicationDbContext.DbContexts;
+using ApplicationDbContext.EntityConfigs;
 using ApplicationDbContext.Migrations;
 using CAM.Service.Abstractions;
 using CAM.Service.Dto;
@@ -6,8 +8,12 @@ using Domain.DataModels;
 using LinqKit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using ReadAppDbContext.Configs;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,11 +23,15 @@ namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
 {
     internal class DataCenterSqlDataRepository : IDataCenterSqlDataRepository
     {
-        private readonly ApplicationDbContext.ApplicationDbContext _dbContext;
+        private readonly AdminDbContext _dbContext;
+        private readonly DbSet<DataCenter> _dbSet;
 
-        public DataCenterSqlDataRepository(ApplicationDbContext.ApplicationDbContext applicationDbContext, IMediator mediator)
+
+        public DataCenterSqlDataRepository(AdminDbContext applicationDbContext)
         {
             _dbContext = applicationDbContext;
+            _dbSet = _dbContext.Set<DataCenter>();
+            _dbContext.Database.EnsureCreated();
         }
 
 
@@ -29,14 +39,14 @@ namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
 
         public async Task AddDataCenter(DataCenter dataCenter)
         {
-            bool isExist = _dbContext.DataCenters.Any(dc => dc.Name == dataCenter.Name);
+            bool isExist = _dbSet.Any(dc => dc.Name == dataCenter.Name);
 
             if (isExist)
                 throw new Exception();
 
             if (dataCenter != default)
             {
-                await _dbContext.DataCenters.AddAsync(dataCenter);
+                await _dbSet.AddAsync(dataCenter);
                 await SaveChangesAsync();
             }
             else
@@ -45,12 +55,12 @@ namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
 
         public async Task<List<DataCenter>> GetAllDataCenters()
         {
-            return await _dbContext.DataCenters.ToListAsync();
+            return await _dbSet.ToListAsync();
         }
 
         public async Task<DataCenter> GetDataCenter(string name)
         {
-            return await _dbContext.DataCenters.FirstOrDefaultAsync(dc => dc.Name == name);
+            return await _dbSet.FirstOrDefaultAsync(dc => dc.Name == name) ?? DataCenter.Empty;
         }
 
 
@@ -62,7 +72,7 @@ namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
             var dcPredicate = predicateBuilder.GetDataCenterPredicate(dto);
             var dbEnginePredicate = predicateBuilder.GetDbEnginePredicate(dto);
 
-            dataCenter = await _dbContext.DataCenters.FirstOrDefaultAsync(dcPredicate) ?? dataCenter;
+            dataCenter = await _dbSet.FirstOrDefaultAsync(dcPredicate) ?? dataCenter;
 
             if (dataCenter != DataCenter.Empty)
             {
@@ -78,7 +88,7 @@ namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
 
         public async Task UpdateDataCenter(string oldName, string newName)
         {
-            DataCenter? dataCenter = _dbContext.DataCenters.FirstOrDefault(dc => dc.Name == oldName);
+            DataCenter? dataCenter = _dbSet.FirstOrDefault(dc => dc.Name == oldName);
 
             if (dataCenter != default)
             {
@@ -90,10 +100,10 @@ namespace CAM.Service.Repository.DataCenterRepo.WriteRepo
 
         public async Task DeleteDataCenter(string name)
         {
-            DataCenter? existEntity = _dbContext.DataCenters.FirstOrDefault(dc => dc.Name == name);
+            DataCenter? existEntity = _dbSet.FirstOrDefault(dc => dc.Name == name);
             if (existEntity != default)
             {
-                _dbContext.DataCenters.Remove(existEntity);
+                _dbSet.Remove(existEntity);
                 await SaveChangesAsync();
 
             }
